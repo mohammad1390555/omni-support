@@ -20,7 +20,7 @@ class IntentType(str, Enum):
 
 class OptionEvaluation(BaseModel):
     action: ActionType
-    score: float = Field(..., ge=0.0, le=1.0, description="Suitability score between 0 and 1")
+    score: float = Field(..., ge=0.0, le=1.0)
     reasoning: str
 
 class TypeSafeDecisionResult(BaseModel):
@@ -31,6 +31,79 @@ class TypeSafeDecisionResult(BaseModel):
     evaluated_options: List[OptionEvaluation] = []
     suggested_reply: Optional[str] = None
     cited_knowledge_ids: List[str] = []
+
+# --- System & Installer Schemas ---
+class SystemStatusResponse(BaseModel):
+    is_installed: bool
+    company_name: str
+    company_industry: str
+    ai_tone: str
+    installed_at: Optional[datetime] = None
+    agents_count: int = 0
+
+class InstallerRequest(BaseModel):
+    company_name: str
+    company_industry: str = "ecommerce" # ecommerce, saas, services, general
+    ai_tone: str = "friendly" # formal, friendly, technical
+    
+    # Admin Credentials
+    admin_username: str
+    admin_email: str
+    admin_display_name: str
+    admin_password: str
+    
+    # AI Settings (Optional / Preset)
+    ai_provider: Optional[str] = "OpenAI Compatible"
+    ai_base_url: Optional[str] = "https://api.openai.com/v1"
+    ai_api_key: Optional[str] = ""
+    ai_model_name: Optional[str] = "gpt-4o-mini"
+    
+    # Widget Branding
+    widget_title: Optional[str] = "پشتیبانی آنلاین"
+    primary_color: Optional[str] = "#4f46e5"
+    welcome_message: Optional[str] = "سلام! چطور می‌توانیم امروز به شما کمک کنیم؟"
+    
+    # Knowledge Seed
+    seed_kb_preset: Optional[str] = "ecommerce" # ecommerce, saas, general
+
+# --- Auth & User Schemas ---
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class LoginResponse(BaseModel):
+    success: bool
+    access_token: str
+    token_type: str = "bearer"
+    user: Dict[str, Any]
+
+class UserCreate(BaseModel):
+    username: str
+    display_name: str
+    email: Optional[str] = ""
+    password: str
+    role: str = "agent" # admin or agent
+
+class UserUpdate(BaseModel):
+    display_name: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    display_name: str
+    email: str
+    role: str
+    is_active: bool
+    is_online: bool
+    created_at: datetime
+    last_login: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
 
 # --- AI Settings Schemas ---
 class AISettingsBase(BaseModel):
@@ -62,7 +135,6 @@ class AISettingsUpdate(BaseModel):
 class AISettingsResponse(AISettingsBase):
     id: int
     updated_at: datetime
-    # We can mask api_key in response for safety, showing e.g. "sk-...1234"
     masked_api_key: Optional[str] = None
 
     class Config:
@@ -83,7 +155,7 @@ class ProviderTestResponse(BaseModel):
 # --- Message Schemas ---
 class MessageCreate(BaseModel):
     content: str
-    sender_type: str = "customer" # customer, agent, ai
+    sender_type: str = "customer"
     sender_name: Optional[str] = None
     is_internal: bool = False
 
@@ -130,8 +202,8 @@ class ConversationResponse(BaseModel):
         from_attributes = True
 
 class ConversationUpdateStatus(BaseModel):
-    status: Optional[str] = None # active, pending_human, resolved, closed
-    ai_mode: Optional[str] = None # auto, copilot, human_only
+    status: Optional[str] = None
+    ai_mode: Optional[str] = None
     assigned_agent: Optional[str] = None
 
 # --- Knowledge & Learning Schemas ---
@@ -208,3 +280,34 @@ class ExternalMessageRequest(BaseModel):
     customer_email: Optional[str] = None
     message: str
     current_page: Optional[str] = None
+
+# --- Canned Responses ---
+class CannedResponseCreate(BaseModel):
+    title: str
+    shortcut: Optional[str] = ""
+    content: str
+    category: Optional[str] = "general"
+
+class CannedResponseOut(BaseModel):
+    id: str
+    title: str
+    shortcut: Optional[str]
+    content: str
+    category: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# --- Analytics Overview ---
+class AnalyticsOverviewResponse(BaseModel):
+    total_conversations: int
+    active_conversations: int
+    pending_human: int
+    resolved_conversations: int
+    total_messages: int
+    ai_resolved_percent: float
+    avg_latency_ms: int
+    total_agents: int
+    total_knowledge_items: int
+    recent_decisions_breakdown: Dict[str, int]

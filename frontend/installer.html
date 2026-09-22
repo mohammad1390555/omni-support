@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نصب و راه‌اندازی هوشمند OmniSupport AI (Setup Wizard)</title>
+  <link rel="stylesheet" href="/frontend/css/style.css">
+  <style>
+    body {
+      background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 15px;
+      overflow-y: auto;
+    }
+    .wizard-card {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      width: 820px;
+      max-width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      position: relative;
+    }
+    .wizard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .wizard-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
+      margin-bottom: 14px;
+    }
+    .wizard-header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .wizard-header p {
+      font-size: 13.5px;
+      color: #94a3b8;
+    }
+
+    /* Stepper Progress Bar */
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      position: relative;
+    }
+    .stepper::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 30px;
+      right: 30px;
+      height: 3px;
+      background: #334155;
+      z-index: 1;
+    }
+    .step-item {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: default;
+    }
+    .step-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px solid #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #94a3b8;
+      transition: all 0.3s;
+    }
+    .step-item.active .step-circle {
+      background: var(--primary);
+      border-color: #818cf8;
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+    }
+    .step-item.completed .step-circle {
+      background: #10b981;
+      border-color: #34d399;
+      color: #ffffff;
+    }
+    .step-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .step-item.active .step-label {
+      color: #f8fafc;
+    }
+
+    /* Wizard Content Sections */
+    .step-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .step-pane.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #ffffff !important;
+      border-radius: 10px !important;
+      padding: 12px 14px !important;
+      width: 100%;
+    }
+    .glass-input:focus {
+      border-color: #818cf8 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+
+    .check-box-item {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .radio-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .radio-card {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .radio-card:hover {
+      border-color: #818cf8;
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .radio-card.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.2);
+    }
+    .radio-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .radio-card p {
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    .wizard-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 36px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wizard-card">
+    <div class="wizard-header">
+      <div class="wizard-logo">⚡</div>
+      <h1>راه‌اندازی و پیکربندی خودکار پنل OmniSupport AI</h1>
+      <p>بدون نیاز به حتی یک خط کدنویسی، در کمتر از ۳ دقیقه سامانه پشتیبانی هوشمند خود را شخصی‌سازی و فعال کنید.</p>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper">
+      <div class="step-item active" id="step-node-1">
+        <div class="step-circle">۱</div>
+        <span class="step-label">بررسی سرور</span>
+      </div>
+      <div class="step-item" id="step-node-2">
+        <div class="step-circle">۲</div>
+        <span class="step-label">سوالات Onboarding</span>
+      </div>
+      <div class="step-item" id="step-node-3">
+        <div class="step-circle">۳</div>
+        <span class="step-label">حساب مدیر ارشد</span>
+      </div>
+      <div class="step-item" id="step-node-4">
+        <div class="step-circle">۴</div>
+        <span class="step-label">هوش مصنوعی</span>
+      </div>
+      <div class="step-item" id="step-node-5">
+        <div class="step-circle">۵</div>
+        <span class="step-label">اتمام نصب</span>
+      </div>
+    </div>
+
+    <form id="wizard-form">
+
+      <!-- STEP 1: System Readiness Check -->
+      <div class="step-pane active" id="pane-step-1">
+        <h3 style="font-size: 16px; margin-bottom: 14px; color: #ffffff;">بررسی خودکار پیش‌نیازها و ماژول‌های سیستم</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">تمام زیرساخت‌های لازم برای پشتیبانی چت بلادرنگ، هوش مصنوعی و پایگاه داده بررسی شد:</p>
+
+        <div class="check-box-item">
+          <div>
+            <strong style="font-size: 13.5px;">محیط پایتون ۳.۱۳ و فریم‌ورک FastAPI</strong>
+            <p style="font-size: 11.5px; color: #94a3b8;">هسته ناهمگام بلادرنگ فعال است.</p>
+          </div>
+          <span style="color: #10b981; font-weight: 700; font-size: 13px;">✓ آماده و فعال</span>
+        </div>
+
+        <div class="check-box-item">
+          <div>
+            <strong style="font-size: 13.5px;">موتور پایگاه‌داده و ذخیره‌سازی حافظه (Async SQLite)</strong>
+            <p style="font-size: 11.5px; color: #94a3b8;">جداول گفتگوها و یادگیری پشتیبان در دسترس هستند.</p>
+          </div>
+          <span style="color: #10b981; font-weight: 700; font-size: 13px;">✓ آماده اتصال</span>
+        </div>
+
+        <div class="check-box-item">
+          <div>
+            <strong style="font-size: 13.5px;">سوکت بلادرنگ پیام‌رسانی (WebSockets)</strong>
+            <p style="font-size: 11.5px; color: #94a3b8;">پشتیبانی از تبادل پیام لحظه‌ای کاربر و اپراتور.</p>
+          </div>
+          <span style="color: #10b981; font-weight: 700; font-size: 13px;">✓ آماده اتصال</span>
+        </div>
+
+        <div class="check-box-item">
+          <div>
+            <strong style="font-size: 13.5px;">موتور تصمیم‌گیری امن TypeSafe AI</strong>
+            <p style="font-size: 11.5px; color: #94a3b8;">ماژول ارزیابی ۴ گانه گزینه‌ها آماده است.</p>
+          </div>
+          <span style="color: #10b981; font-weight: 700; font-size: 13px;">✓ لایه امنیتی فعال</span>
+        </div>
+      </div>
+
+      <!-- STEP 2: Smart Onboarding Questions -->
+      <div class="step-pane" id="pane-step-2">
+        <h3 style="font-size: 16px; margin-bottom: 12px; color: #ffffff;">سوالات هوشمند راه‌اندازی (Onboarding)</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">با پاسخ به این چند سوال، هوش مصنوعی رفتار خود را متناسب با کسب‌وکار شما شخصی‌سازی می‌کند:</p>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label class="form-label" style="color: #ffffff;">نام شرکت، برند یا وب‌سایت شما چیست؟</label>
+          <input type="text" class="glass-input rtl" id="w-company-name" required value="فروشگاه اینترنتی آران" placeholder="مثال: دیجی‌پلاس، شرکت آریا، آکادمی وب">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label class="form-label" style="color: #ffffff;">حوزه اصلی فعالیت شما چیست؟</label>
+          <div class="radio-card-grid">
+            <div class="radio-card selected" onclick="selectIndustry('ecommerce', this)">
+              <h4>🛍️ فروشگاه اینترنتی</h4>
+              <p>سفارشات، مرجوعی، فاکتور، کد رهگیری پست</p>
+            </div>
+            <div class="radio-card" onclick="selectIndustry('saas', this)">
+              <h4>💻 نرم‌افزار / SaaS</h4>
+              <p>اشتراک ماهانه، دسترسی API، لایسنس، فنی</p>
+            </div>
+            <div class="radio-card" onclick="selectIndustry('services', this)">
+              <h4>🏢 شرکت خدماتی / مشاوره‌ای</h4>
+              <p>رزرو وقت، پروپوزال، ساعات مشاوره، تماس</p>
+            </div>
+          </div>
+          <input type="hidden" id="w-industry" value="ecommerce">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="color: #ffffff;">لحن پاسخگویی هوش مصنوعی چطور باشد؟</label>
+          <div class="radio-card-grid">
+            <div class="radio-card selected" onclick="selectTone('friendly', this)">
+              <h4>😊 صمیمی و دوستانه</h4>
+              <p>گرم، محترمانه و همدلانه با ایموجی‌های ملایم</p>
+            </div>
+            <div class="radio-card" onclick="selectTone('formal', this)">
+              <h4>👔 رسمی و سازمانی</h4>
+              <p>اداری، جدی، بدون حاشیه و بسیار موقر</p>
+            </div>
+            <div class="radio-card" onclick="selectTone('technical', this)">
+              <h4>🛠️ دقیق و تکنیکال</h4>
+              <p>مستند، همراه با مراحل گام‌به‌گام شماره‌دار</p>
+            </div>
+          </div>
+          <input type="hidden" id="w-tone" value="friendly">
+        </div>
+      </div>
+
+      <!-- STEP 3: Admin Master Account Setup -->
+      <div class="step-pane" id="pane-step-3">
+        <h3 style="font-size: 16px; margin-bottom: 12px; color: #ffffff;">مشخصات حساب کاربری مدیر ارشد (Super Admin)</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">این حساب دارای دسترسی کامل برای مدیریت کلیدهای هوش مصنوعی، اعضای تیم و تنظیمات است:</p>
+
+        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label" style="color: #ffffff;">نام کاربری ادمین (Username)</label>
+            <input type="text" class="glass-input" id="w-admin-username" required value="admin" placeholder="admin">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="color: #ffffff;">ایمیل مدیر</label>
+            <input type="email" class="glass-input" id="w-admin-email" required value="admin@example.com" placeholder="admin@example.com">
+          </div>
+
+          <div class="form-group full-width" style="grid-column: span 2;">
+            <label class="form-label" style="color: #ffffff;">نام و نام خانوادگی یا عنوان نمایشی</label>
+            <input type="text" class="glass-input rtl" id="w-admin-name" required value="مدیر ارشد سیستم" placeholder="مثال: علی محمدی">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="color: #ffffff;">کلمه عبور مدیر</label>
+            <input type="password" class="glass-input" id="w-admin-pass" required value="admin123" placeholder="رمز عبور">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="color: #ffffff;">تکرار کلمه عبور</label>
+            <input type="password" class="glass-input" id="w-admin-pass2" required value="admin123" placeholder="تکرار رمز عبور">
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: AI & Provider Setup -->
+      <div class="step-pane" id="pane-step-4">
+        <h3 style="font-size: 16px; margin-bottom: 12px; color: #ffffff;">تنظیمات ارائه‌دهنده هوش مصنوعی و کلید API</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 18px;">می‌توانید همین حالا کلید خود را وارد کنید یا آن را خالی بگذارید تا سیستم با قوانین هوشمند داخلی کار کند:</p>
+
+        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label" style="color: #ffffff;">ارائه‌دهنده (Provider)</label>
+            <select class="glass-input rtl" id="w-ai-provider" onchange="onWizardProviderChange(this.value)">
+              <option value="OpenAI Compatible">OpenAI (GPT-4o, GPT-4o-mini)</option>
+              <option value="DeepSeek">DeepSeek (بسیار ارزان و قدرتمند)</option>
+              <option value="Groq">Groq (سرعت فوق‌العاده LPU)</option>
+              <option value="OpenRouter">OpenRouter (همه مدل‌ها در یک کلید)</option>
+              <option value="Ollama">Ollama (مدل‌های لوکال آفلاین)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="color: #ffffff;">نام مدل (Model Name)</label>
+            <input type="text" class="glass-input" id="w-ai-model" value="gpt-4o-mini">
+          </div>
+
+          <div class="form-group full-width" style="grid-column: span 2;">
+            <label class="form-label" style="color: #ffffff;">آدرس Base URL (Base Link)</label>
+            <input type="text" class="glass-input" id="w-ai-base-url" value="https://api.openai.com/v1">
+          </div>
+
+          <div class="form-group full-width" style="grid-column: span 2;">
+            <label class="form-label" style="color: #ffffff;">کلید دسترسی API Key (اختیاری در مرحله اول)</label>
+            <input type="password" class="glass-input" id="w-ai-key" placeholder="sk-... (می‌توانید بعداً در پنل هم وارد کنید)">
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Final Review & Installation -->
+      <div class="step-pane" id="pane-step-5">
+        <div style="text-align: center; padding: 20px 0;">
+          <div style="font-size: 48px; margin-bottom: 14px;">🎉</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 8px;">همه چیز آماده است!</h3>
+          <p style="font-size: 13.5px; color: #94a3b8; max-width: 500px; margin: 0 auto 24px;">
+            با کلیک روی دکمه زیر، پیکربندی ذخیره شده، حساب ادمین ساخته می‌شود و مستقیماً وارد میزکار پشتیبانی خواهید شد.
+          </p>
+
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px; max-width: 500px; margin: 0 auto; text-align: right; font-size: 13px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #94a3b8;">نام مجموعه:</span>
+              <strong id="summary-company">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #94a3b8;">نام کاربری ادمین:</span>
+              <strong id="summary-admin">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #94a3b8;">حوزه فعالیت:</span>
+              <strong id="summary-industry">-</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #94a3b8;">پایگاه دانش پیش‌فرض:</span>
+              <strong style="color: #10b981;">بارگذاری خودکار نمونه سوالات</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="wizard-actions">
+        <button type="button" class="btn-secondary" id="btn-wizard-prev" style="display: none;" onclick="goWizardPrev()">
+          ← مرحله قبل
+        </button>
+        <div style="margin-right: auto; display: flex; gap: 10px;">
+          <button type="button" class="btn-primary" id="btn-wizard-next" onclick="goWizardNext()">
+            مرحله بعد →
+          </button>
+          <button type="submit" class="btn-primary" id="btn-wizard-finish" style="display: none; background-color: #10b981;">
+            ✓ پایان نصب و ورود به پنل
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function selectIndustry(val, card) {
+      document.querySelectorAll('#pane-step-2 .radio-card-grid:first-of-type .radio-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      document.getElementById('w-industry').value = val;
+    }
+
+    function selectTone(val, card) {
+      document.querySelectorAll('#pane-step-2 .radio-card-grid:last-of-type .radio-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      document.getElementById('w-tone').value = val;
+    }
+
+    function onWizardProviderChange(val) {
+      const baseInput = document.getElementById('w-ai-base-url');
+      const modelInput = document.getElementById('w-ai-model');
+
+      if (val === 'DeepSeek') {
+        baseInput.value = 'https://api.deepseek.com';
+        modelInput.value = 'deepseek-chat';
+      } else if (val === 'Groq') {
+        baseInput.value = 'https://api.groq.com/openai/v1';
+        modelInput.value = 'llama-3.3-70b-versatile';
+      } else if (val === 'OpenRouter') {
+        baseInput.value = 'https://openrouter.ai/api/v1';
+        modelInput.value = 'meta-llama/llama-3.3-70b-instruct';
+      } else if (val === 'Ollama') {
+        baseInput.value = 'http://localhost:11434/v1';
+        modelInput.value = 'llama3.2';
+      } else {
+        baseInput.value = 'https://api.openai.com/v1';
+        modelInput.value = 'gpt-4o-mini';
+      }
+    }
+
+    function updateStepUI() {
+      for (let i = 1; i <= totalSteps; i++) {
+        const pane = document.getElementById(`pane-step-${i}`);
+        const node = document.getElementById(`step-node-${i}`);
+        if (pane) pane.classList.toggle('active', i === currentStep);
+        if (node) {
+          node.classList.toggle('active', i === currentStep);
+          node.classList.toggle('completed', i < currentStep);
+        }
+      }
+
+      document.getElementById('btn-wizard-prev').style.display = currentStep > 1 ? 'inline-flex' : 'none';
+      document.getElementById('btn-wizard-next').style.display = currentStep < totalSteps ? 'inline-flex' : 'none';
+      document.getElementById('btn-wizard-finish').style.display = currentStep === totalSteps ? 'inline-flex' : 'none';
+
+      if (currentStep === 5) {
+        document.getElementById('summary-company').textContent = document.getElementById('w-company-name').value;
+        document.getElementById('summary-admin').textContent = document.getElementById('w-admin-username').value;
+        const ind = document.getElementById('w-industry').value;
+        document.getElementById('summary-industry').textContent = ind === 'ecommerce' ? 'فروشگاه اینترنتی' : ind === 'saas' ? 'نرم‌افزار SaaS' : 'شرکت خدماتی';
+      }
+    }
+
+    function goWizardNext() {
+      // Basic validations
+      if (currentStep === 2 && !document.getElementById('w-company-name').value.trim()) {
+        alert('لطفاً نام شرکت یا برند را وارد کنید.');
+        return;
+      }
+      if (currentStep === 3) {
+        const p1 = document.getElementById('w-admin-pass').value;
+        const p2 = document.getElementById('w-admin-pass2').value;
+        if (p1 !== p2) {
+          alert('کلمات عبور با یکدیگر تطابق ندارند.');
+          return;
+        }
+        if (p1.length < 4) {
+          alert('کلمه عبور باید حداقل ۴ نویسه باشد.');
+          return;
+        }
+      }
+
+      if (currentStep < totalSteps) {
+        currentStep++;
+        updateStepUI();
+      }
+    }
+
+    function goWizardPrev() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepUI();
+      }
+    }
+
+    // Submit installation
+    document.getElementById('wizard-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const finishBtn = document.getElementById('btn-wizard-finish');
+      finishBtn.disabled = true;
+      finishBtn.textContent = 'در حال ذخیره‌سازی و راه‌اندازی...';
+
+      const payload = {
+        company_name: document.getElementById('w-company-name').value.trim(),
+        company_industry: document.getElementById('w-industry').value,
+        ai_tone: document.getElementById('w-tone').value,
+        admin_username: document.getElementById('w-admin-username').value.trim(),
+        admin_email: document.getElementById('w-admin-email').value.trim(),
+        admin_display_name: document.getElementById('w-admin-name').value.trim(),
+        admin_password: document.getElementById('w-admin-pass').value,
+        ai_provider: document.getElementById('w-ai-provider').value,
+        ai_base_url: document.getElementById('w-ai-base-url').value.trim(),
+        ai_api_key: document.getElementById('w-ai-key').value.trim(),
+        ai_model_name: document.getElementById('w-ai-model').value.trim(),
+        widget_title: 'پشتیبانی آنلاین ' + document.getElementById('w-company-name').value.trim(),
+        primary_color: '#4f46e5',
+        seed_kb_preset: document.getElementById('w-industry').value
+      };
+
+      try {
+        const res = await fetch('/api/v1/installer/install', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          // Store token and user
+          localStorage.setItem('omni_token', data.access_token);
+          localStorage.setItem('omni_user', JSON.stringify(data.user));
+          
+          alert('🎉 تبریک! سامانه با موفقیت نصب و پیکربندی شد.');
+          window.location.href = '/';
+        } else {
+          const err = await res.json();
+          alert('خطا در نصب: ' + (err.detail || 'نامشخص'));
+          finishBtn.disabled = false;
+          finishBtn.textContent = '✓ پایان نصب و ورود به پنل';
+        }
+      } catch (err) {
+        alert('خطای اتصال به سرور: ' + err.message);
+        finishBtn.disabled = false;
+        finishBtn.textContent = '✓ پایان نصب و ورود به پنل';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -3,38 +3,56 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy import select
 
 from app.config import settings
 from app.database import engine, Base, AsyncSessionLocal
-from app.models import Site, AISettings, KnowledgeItem, Agent
+from app.models import Site, AISettings, KnowledgeItem, Agent, SystemConfig, CannedResponse
+from app.core.security import hash_password
 from app.routers.ai_router import router as ai_router
 from app.routers.chat import router as chat_router
 from app.routers.knowledge import router as knowledge_router
 from app.routers.sites import router as sites_router
 from app.routers.external_api import router as external_router
+from app.routers.auth import router as auth_router
+from app.routers.installer import router as installer_router
+from app.routers.analytics import router as analytics_router
+from app.routers.canned import router as canned_router
 
 async def seed_initial_data():
     """Seeds default site, settings, and rich sample knowledge items."""
     async with AsyncSessionLocal() as session:
-        # 1. Default Site
+        # 1. System Config
+        cfg_stmt = select(SystemConfig).where(SystemConfig.id == 1)
+        cfg = (await session.execute(cfg_stmt)).scalars().first()
+        if not cfg:
+            cfg = SystemConfig(
+                id=1,
+                is_installed=True, # Default installed so preview works immediately; can be re-run in /install
+                company_name="مرکز پشتیبانی هوشمند آران",
+                company_industry="ecommerce",
+                ai_tone="friendly"
+            )
+            session.add(cfg)
+
+        # 2. Default Site
         site_stmt = select(Site).where(Site.id == "site_default")
         default_site = (await session.execute(site_stmt)).scalars().first()
         if not default_site:
             default_site = Site(
                 id="site_default",
-                name="فروشگاه و سامانه آنلاین مرکزی",
+                name="فروشگاه آنلاین آران",
                 domain="*",
                 api_key="omni_live_k8s92f8a129d38c71e041",
-                welcome_message="سلام و درود! به پشتیبانی هوشمند خوش آمدید. چطور می‌توانیم شما را راهنمایی کنیم؟",
+                welcome_message="سلام و درود! به پشتیبانی هوشمند آران خوش آمدید. چطور می‌توانیم شما را راهنمایی کنیم؟",
                 primary_color="#4f46e5",
-                widget_title="مرکز پشتیبانی هوشمند",
+                widget_title="پشتیبانی آنلاین آران",
                 widget_position="right"
             )
             session.add(default_site)
 
-        # 2. AI Settings
+        # 3. AI Settings
         ai_stmt = select(AISettings).where(AISettings.id == 1)
         ai_set = (await session.execute(ai_stmt)).scalars().first()
         if not ai_set:
@@ -52,19 +70,48 @@ async def seed_initial_data():
             )
             session.add(ai_set)
 
-        # 3. Default Agent
-        agent_stmt = select(Agent).where(Agent.username == "admin")
-        agent = (await session.execute(agent_stmt)).scalars().first()
-        if not agent:
-            agent = Agent(
+        # 4. Default Admin & Member Agents
+        admin_stmt = select(Agent).where(Agent.username == "admin")
+        admin = (await session.execute(admin_stmt)).scalars().first()
+        if not admin:
+            admin = Agent(
                 username="admin",
-                display_name="مدیر سیستم (پشتیبان ارشد)",
+                display_name="مدیر ارشد سیستم (Admin)",
+                email="admin@omni-support.local",
+                password_hash=hash_password("admin123"),
                 role="admin",
+                is_active=True,
                 is_online=True
             )
-            session.add(agent)
+            session.add(admin)
 
-        # 4. Seed Knowledge Base with realistic sample QA
+        agent_stmt = select(Agent).where(Agent.username == "agent1")
+        agent1 = (await session.execute(agent_stmt)).scalars().first()
+        if not agent1:
+            agent1 = Agent(
+                username="agent1",
+                display_name="سارا حسینی (پشتیبان فنی)",
+                email="sara@omni-support.local",
+                password_hash=hash_password("agent123"),
+                role="agent",
+                is_active=True,
+                is_online=True
+            )
+            session.add(agent1)
+
+        # 5. Canned Responses
+        canned_stmt = select(CannedResponse).limit(1)
+        has_canned = (await session.execute(canned_stmt)).scalars().first()
+        if not has_canned:
+            canned_samples = [
+                CannedResponse(title="سلام و احوالپرسی", shortcut="/hello", content="سلام و درود! روزتون بخیر. چطور می‌تونم کمکتون کنم؟"),
+                CannedResponse(title="درخواست شماره سفارش", shortcut="/order", content="لطفاً شماره فاکتور یا شماره موبایل ثبت‌نامی خود را جهت بررسی بفرمایید."),
+                CannedResponse(title="ارجاع به واحد فنی", shortcut="/tech", content="موضوع شما با اولویت بالا به واحد فنی ارجاع داده شد و در اسرع وقت بررسی خواهد شد."),
+                CannedResponse(title="پایان مکالمه و تشکر", shortcut="/bye", content="خوشحالیم که مشکل شما حل شد! در صورت وجود هر سوال دیگری، همیشه در خدمت شما هستیم.")
+            ]
+            session.add_all(canned_samples)
+
+        # 6. Seed Knowledge Base with realistic sample QA
         kb_stmt = select(KnowledgeItem).limit(1)
         has_kb = (await session.execute(kb_stmt)).scalars().first()
         if not has_kb:
@@ -104,10 +151,8 @@ async def seed_initial_data():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create DB tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    # Seed data
     await seed_initial_data()
     yield
 
@@ -117,7 +162,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration - Allow all origins for the embeddable widget
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -132,6 +176,10 @@ if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Mount API Routers
+app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(installer_router, prefix=settings.API_V1_STR)
+app.include_router(analytics_router, prefix=settings.API_V1_STR)
+app.include_router(canned_router, prefix=settings.API_V1_STR)
 app.include_router(chat_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)
 app.include_router(knowledge_router, prefix=settings.API_V1_STR)
@@ -146,6 +194,20 @@ if os.path.exists(frontend_dir):
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "app": settings.PROJECT_NAME, "version": settings.VERSION}
+
+@app.get("/install")
+async def serve_installer():
+    installer_file = os.path.join(frontend_dir, "installer.html")
+    if os.path.exists(installer_file):
+        return FileResponse(installer_file)
+    return {"error": "Installer page not found"}
+
+@app.get("/login")
+async def serve_login():
+    login_file = os.path.join(frontend_dir, "login.html")
+    if os.path.exists(login_file):
+        return FileResponse(login_file)
+    return {"error": "Login page not found"}
 
 @app.get("/widget-demo")
 async def serve_widget_demo():

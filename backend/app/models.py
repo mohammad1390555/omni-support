@@ -10,6 +10,18 @@ def gen_uuid() -> str:
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
+class SystemConfig(Base):
+    __tablename__ = "system_config"
+
+    id = Column(Integer, primary_key=True, default=1)
+    is_installed = Column(Boolean, default=False)
+    company_name = Column(String(128), default="شرکت من")
+    company_industry = Column(String(64), default="ecommerce") # ecommerce, saas, services, general
+    ai_tone = Column(String(32), default="friendly") # formal, friendly, technical
+    installed_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
+
+
 class Site(Base):
     __tablename__ = "sites"
 
@@ -33,7 +45,7 @@ class Conversation(Base):
 
     id = Column(String(64), primary_key=True, default=gen_uuid)
     site_id = Column(String(64), ForeignKey("sites.id"), nullable=False)
-    customer_id = Column(String(128), nullable=False) # e.g. anon-session or email
+    customer_id = Column(String(128), nullable=False)
     customer_name = Column(String(128), default="کاربر مهمان")
     customer_email = Column(String(128), nullable=True)
     customer_ip = Column(String(64), nullable=True)
@@ -42,7 +54,7 @@ class Conversation(Base):
     
     # Status: 'active', 'pending_human', 'resolved', 'closed'
     status = Column(String(32), default="active")
-    # AI Mode: 'auto' (AI handles when confident), 'copilot' (AI suggests to human), 'human_only' (AI silent)
+    # AI Mode: 'auto', 'copilot', 'human_only'
     ai_mode = Column(String(32), default="auto")
     assigned_agent = Column(String(128), nullable=True)
     
@@ -63,7 +75,6 @@ class Message(Base):
     sender_type = Column(String(32), nullable=False)
     sender_name = Column(String(128), default="سیستم")
     content = Column(Text, nullable=False)
-    # is_internal: True for agent-only notes or unapproved draft suggestions
     is_internal = Column(Boolean, default=False)
     decision_id = Column(String(64), nullable=True)
     created_at = Column(DateTime, default=utc_now)
@@ -78,15 +89,13 @@ class TypeSafeDecisionLog(Base):
     conversation_id = Column(String(64), ForeignKey("conversations.id"), nullable=False)
     customer_message = Column(Text, nullable=False)
     
-    # Intent: faq, technical, billing, complaint, human_request, greeting, unknown
     intent = Column(String(64), default="unknown")
     confidence = Column(Float, default=0.0)
-    # Action chosen: 'AUTO_ANSWER', 'SUGGEST_TO_AGENT', 'TRANSFER_TO_HUMAN', 'CLARIFY'
     action = Column(String(64), nullable=False)
     reason = Column(Text, nullable=True)
-    options_evaluated_json = Column(Text, default="[]") # JSON list of candidate actions & scores
+    options_evaluated_json = Column(Text, default="[]")
     suggested_reply = Column(Text, nullable=True)
-    retrieved_knowledge_json = Column(Text, default="[]") # JSON list of cited knowledge items
+    retrieved_knowledge_json = Column(Text, default="[]")
     
     model_used = Column(String(128), default="")
     provider = Column(String(64), default="")
@@ -100,12 +109,11 @@ class KnowledgeItem(Base):
     __tablename__ = "knowledge_items"
 
     id = Column(String(64), primary_key=True, default=gen_uuid)
-    site_id = Column(String(64), ForeignKey("sites.id"), nullable=True) # None = Global
-    title = Column(String(256), nullable=False) # Question or headline
-    content = Column(Text, nullable=False) # Answer or details
-    # category: 'faq', 'policy', 'agent_learned', 'technical', 'billing'
+    site_id = Column(String(64), ForeignKey("sites.id"), nullable=True)
+    title = Column(String(256), nullable=False)
+    content = Column(Text, nullable=False)
     category = Column(String(64), default="agent_learned")
-    source = Column(String(64), default="agent_learned") # 'manual', 'agent_learned', 'website'
+    source = Column(String(64), default="agent_learned")
     source_conversation_id = Column(String(64), nullable=True)
     is_approved = Column(Boolean, default=True)
     usage_count = Column(Integer, default=0)
@@ -127,7 +135,6 @@ class AISettings(Base):
     temperature = Column(Float, default=0.2)
     max_tokens = Column(Integer, default=1000)
     
-    # TypeSafe & Thresholds
     auto_answer_threshold = Column(Float, default=0.75)
     enable_typesafe_decision = Column(Boolean, default=True)
     enable_agent_learning = Column(Boolean, default=True)
@@ -147,9 +154,23 @@ class Agent(Base):
 
     id = Column(String(64), primary_key=True, default=gen_uuid)
     username = Column(String(64), unique=True, nullable=False)
-    display_name = Column(String(128), nullable=False)
     email = Column(String(128), default="")
-    role = Column(String(32), default="admin") # admin, agent
+    display_name = Column(String(128), nullable=False)
+    password_hash = Column(String(256), nullable=False)
+    role = Column(String(32), default="agent") # 'admin' or 'agent'
+    is_active = Column(Boolean, default=True)
     is_online = Column(Boolean, default=True)
     avatar = Column(String(256), default="")
+    last_login = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=utc_now)
+
+
+class CannedResponse(Base):
+    __tablename__ = "canned_responses"
+
+    id = Column(String(64), primary_key=True, default=gen_uuid)
+    title = Column(String(128), nullable=False)
+    shortcut = Column(String(64), nullable=True) # e.g. /hello, /hours
+    content = Column(Text, nullable=False)
+    category = Column(String(64), default="general")
     created_at = Column(DateTime, default=utc_now)

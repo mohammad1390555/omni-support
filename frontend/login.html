@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود به پنل پشتیبانی OmniSupport AI</title>
+  <link rel="stylesheet" href="/frontend/css/style.css">
+  <style>
+    body {
+      background: radial-gradient(circle at 80% 20%, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-container {
+      width: 900px;
+      max-width: 100%;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    }
+    .login-info-side {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.3) 0%, rgba(124, 58, 237, 0.15) 100%);
+      padding: 40px 32px;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .login-form-side {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .login-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+    .login-title h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .login-title p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+    }
+    .role-desc-card {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .role-desc-card h4 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .role-desc-card p {
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #ffffff !important;
+      border-radius: 10px !important;
+      padding: 12px 14px !important;
+      width: 100%;
+    }
+    .glass-input:focus {
+      border-color: #818cf8 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+    .quick-login-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quick-login-chip:hover {
+      background: rgba(99, 102, 241, 0.3);
+      color: #ffffff;
+      border-color: #818cf8;
+    }
+    @media (max-width: 768px) {
+      .login-container { grid-template-columns: 1fr; }
+      .login-info-side { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <!-- Info & Roles Side -->
+    <div class="login-info-side">
+      <div>
+        <div class="login-logo">⚡</div>
+        <h3 style="font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 6px;">پلتفرم پشتیبانی هوشمند OmniSupport</h3>
+        <p style="font-size: 12.5px; color: #94a3b8; margin-bottom: 24px;">سطوح دسترسی و کنترل هوشمند تیمی:</p>
+
+        <div class="role-desc-card">
+          <h4>👑 مدیر سیستم (Admin Role)</h4>
+          <p>دسترسی نامحدود به تنظیمات هوش مصنوعی، اتصال Base URL، کلیدهای API، تعریف و مدیریت اعضای تیم، آمار و گزارشات جامع.</p>
+        </div>
+
+        <div class="role-desc-card">
+          <h4>🎧 اپراتور / پشتیبان (Agent Member)</h4>
+          <p>میزکار اختصاصی و امن چت زنده، پاسخ‌گویی به مشتریان، استفاده از پاسخ‌های آماده، و ثبت پاسخ‌های جدید در حافظه هوش مصنوعی (بدون دسترسی به تنظیمات حساس سرور).</p>
+        </div>
+      </div>
+
+      <div style="font-size: 11.5px; color: #64748b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px;">
+        قدرت‌گرفته از موتور تصمیم‌گیری ایمن TypeSafe AI
+      </div>
+    </div>
+
+    <!-- Login Form Side -->
+    <div class="login-form-side">
+      <div class="login-title">
+        <h2>ورود به حساب کاربری</h2>
+        <p>لطفاً نام کاربری و کلمه عبور خود را وارد نمایید.</p>
+      </div>
+
+      <!-- Quick Fill Buttons -->
+      <div style="margin-bottom: 20px;">
+        <span style="font-size: 11.5px; color: #94a3b8; display: block; margin-bottom: 6px;">ورود آزمایشی سریع با یک کلیک:</span>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="quick-login-chip" onclick="fillCreds('admin', 'admin123')">
+            👑 ورود به عنوان مدیر (Admin)
+          </button>
+          <button type="button" class="quick-login-chip" onclick="fillCreds('agent1', 'agent123')">
+            🎧 ورود به عنوان پشتیبان (Member)
+          </button>
+        </div>
+      </div>
+
+      <form id="form-login">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="color: #ffffff;">نام کاربری (Username)</label>
+          <input type="text" class="glass-input" id="login-username" required placeholder="نام کاربری">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="color: #ffffff; margin-bottom: 0;">کلمه عبور (Password)</label>
+            <span style="font-size: 11.5px; color: #818cf8; cursor: pointer;" onclick="togglePasswordVis()">نمایش رمز</span>
+          </div>
+          <input type="password" class="glass-input" id="login-password" required placeholder="کلمه عبور">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #94a3b8; cursor: pointer;">
+            <input type="checkbox" id="remember-me" checked>
+            <span>مرا به خاطر بسپار</span>
+          </label>
+          <a href="/install" style="font-size: 12px; color: #818cf8; text-decoration: none;">⚙ راه‌اندازی و Installer</a>
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-submit-login" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px;">
+          ورود به پنل پشتیبانی →
+        </button>
+      </form>
+
+      <div id="login-error-box" style="margin-top: 14px; padding: 10px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 12.5px; display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    function fillCreds(u, p) {
+      document.getElementById('login-username').value = u;
+      document.getElementById('login-password').value = p;
+    }
+
+    function togglePasswordVis() {
+      const p = document.getElementById('login-password');
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errBox = document.getElementById('login-error-box');
+      const submitBtn = document.getElementById('btn-submit-login');
+      
+      errBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'در حال احراز هویت...';
+
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('omni_token', data.access_token);
+          localStorage.setItem('omni_user', JSON.stringify(data.user));
+          window.location.href = '/';
+        } else {
+          const err = await res.json();
+          errBox.textContent = err.detail || 'نام کاربری یا کلمه عبور نادرست است.';
+          errBox.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'ورود به پنل پشتیبانی →';
+        }
+      } catch (err) {
+        errBox.textContent = 'خطای ارتباط با سرور: ' + err.message;
+        errBox.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ورود به پنل پشتیبانی →';
+      }
+    });
+  </script>
+</body>
+</html>
