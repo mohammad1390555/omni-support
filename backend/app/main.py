@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse
 from sqlalchemy import select
 
 from app.config import settings
@@ -19,6 +19,7 @@ from app.routers.auth import router as auth_router
 from app.routers.installer import router as installer_router
 from app.routers.analytics import router as analytics_router
 from app.routers.canned import router as canned_router
+from app.routers.portal import router as portal_router
 
 async def seed_initial_data():
     """Seeds default site, settings, and rich sample knowledge items."""
@@ -29,10 +30,11 @@ async def seed_initial_data():
         if not cfg:
             cfg = SystemConfig(
                 id=1,
-                is_installed=True, # Default installed so preview works immediately; can be re-run in /install
+                is_installed=True,
                 company_name="مرکز پشتیبانی هوشمند آران",
                 company_industry="ecommerce",
-                ai_tone="friendly"
+                ai_tone="friendly",
+                ticket_prefix="HD"
             )
             session.add(cfg)
 
@@ -181,6 +183,7 @@ app.include_router(installer_router, prefix=settings.API_V1_STR)
 app.include_router(analytics_router, prefix=settings.API_V1_STR)
 app.include_router(canned_router, prefix=settings.API_V1_STR)
 app.include_router(chat_router, prefix=settings.API_V1_STR)
+app.include_router(portal_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)
 app.include_router(knowledge_router, prefix=settings.API_V1_STR)
 app.include_router(sites_router, prefix=settings.API_V1_STR)
@@ -208,6 +211,13 @@ async def serve_login():
     if os.path.exists(login_file):
         return FileResponse(login_file)
     return {"error": "Login page not found"}
+
+@app.get("/portal")
+async def serve_portal():
+    portal_file = os.path.join(frontend_dir, "portal.html")
+    if os.path.exists(portal_file):
+        return FileResponse(portal_file)
+    return {"error": "Customer portal not found"}
 
 @app.get("/widget-demo")
 async def serve_widget_demo():

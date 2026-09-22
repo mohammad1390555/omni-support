@@ -38,13 +38,15 @@ class SystemStatusResponse(BaseModel):
     company_name: str
     company_industry: str
     ai_tone: str
+    ticket_prefix: str
     installed_at: Optional[datetime] = None
     agents_count: int = 0
 
 class InstallerRequest(BaseModel):
     company_name: str
-    company_industry: str = "ecommerce" # ecommerce, saas, services, general
-    ai_tone: str = "friendly" # formal, friendly, technical
+    company_industry: str = "ecommerce"
+    ai_tone: str = "friendly"
+    ticket_prefix: Optional[str] = "HD"
     
     # Admin Credentials
     admin_username: str
@@ -52,7 +54,7 @@ class InstallerRequest(BaseModel):
     admin_display_name: str
     admin_password: str
     
-    # AI Settings (Optional / Preset)
+    # AI Settings
     ai_provider: Optional[str] = "OpenAI Compatible"
     ai_base_url: Optional[str] = "https://api.openai.com/v1"
     ai_api_key: Optional[str] = ""
@@ -64,7 +66,7 @@ class InstallerRequest(BaseModel):
     welcome_message: Optional[str] = "سلام! چطور می‌توانیم امروز به شما کمک کنیم؟"
     
     # Knowledge Seed
-    seed_kb_preset: Optional[str] = "ecommerce" # ecommerce, saas, general
+    seed_kb_preset: Optional[str] = "ecommerce"
 
 # --- Auth & User Schemas ---
 class LoginRequest(BaseModel):
@@ -82,7 +84,7 @@ class UserCreate(BaseModel):
     display_name: str
     email: Optional[str] = ""
     password: str
-    role: str = "agent" # admin or agent
+    role: str = "agent"
 
 class UserUpdate(BaseModel):
     display_name: Optional[str] = None
@@ -152,12 +154,24 @@ class ProviderTestResponse(BaseModel):
     message: str
     sample_response: Optional[str] = None
 
-# --- Message Schemas ---
+# --- Message & Attachment Schemas ---
 class MessageCreate(BaseModel):
     content: str
     sender_type: str = "customer"
     sender_name: Optional[str] = None
     is_internal: bool = False
+
+class AttachmentResponse(BaseModel):
+    id: str
+    conversation_id: str
+    message_id: Optional[str]
+    file_name: str
+    file_size_kb: int
+    file_url: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 class MessageResponse(BaseModel):
     id: str
@@ -172,39 +186,76 @@ class MessageResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# --- Conversation Schemas ---
+class TicketActivityResponse(BaseModel):
+    id: str
+    conversation_id: str
+    actor_type: str
+    actor_name: str
+    action: str
+    details: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# --- Helpdesk Ticket Schemas ---
 class ConversationCreate(BaseModel):
     site_id: str
     customer_id: str
     customer_name: Optional[str] = "کاربر مهمان"
     customer_email: Optional[str] = None
+    customer_phone: Optional[str] = None
     customer_device: Optional[str] = None
     current_page: Optional[str] = None
+    subject: Optional[str] = "درخواست پشتیبانی جدید"
+    priority: Optional[str] = "medium" # low, medium, high, urgent
     initial_message: Optional[str] = None
 
 class ConversationResponse(BaseModel):
     id: str
+    ticket_number: str
+    subject: str
     site_id: str
     customer_id: str
     customer_name: str
     customer_email: Optional[str]
+    customer_phone: Optional[str]
     customer_ip: Optional[str]
     customer_device: Optional[str]
     current_page: Optional[str]
-    status: str
+    status: str # open, in_progress, pending_customer, resolved, closed
+    priority: str # low, medium, high, urgent
+    assigned_agent_id: Optional[str]
+    assigned_agent_name: Optional[str]
     ai_mode: str
-    assigned_agent: Optional[str]
+    tags: str
+    sentiment: str
+    ai_summary: Optional[str]
+    sla_due_at: Optional[datetime]
+    first_response_at: Optional[datetime]
     last_message_at: datetime
     created_at: datetime
     messages: List[MessageResponse] = []
+    activities: List[TicketActivityResponse] = []
+    attachments: List[AttachmentResponse] = []
 
     class Config:
         from_attributes = True
 
-class ConversationUpdateStatus(BaseModel):
-    status: Optional[str] = None
-    ai_mode: Optional[str] = None
-    assigned_agent: Optional[str] = None
+class TicketAssignRequest(BaseModel):
+    agent_id: str
+
+class TicketStatusUpdateRequest(BaseModel):
+    status: str
+
+class TicketPriorityUpdateRequest(BaseModel):
+    priority: str
+
+class TicketTagsUpdateRequest(BaseModel):
+    tags: str
+
+class InternalNoteCreate(BaseModel):
+    content: str
 
 # --- Knowledge & Learning Schemas ---
 class KnowledgeItemCreate(BaseModel):
@@ -278,6 +329,9 @@ class ExternalMessageRequest(BaseModel):
     customer_id: str
     customer_name: Optional[str] = "کاربر وب‌سایت"
     customer_email: Optional[str] = None
+    customer_phone: Optional[str] = None
+    subject: Optional[str] = "درخواست پشتیبانی وب‌سایت"
+    priority: Optional[str] = "medium"
     message: str
     current_page: Optional[str] = None
 
@@ -302,12 +356,15 @@ class CannedResponseOut(BaseModel):
 # --- Analytics Overview ---
 class AnalyticsOverviewResponse(BaseModel):
     total_conversations: int
-    active_conversations: int
-    pending_human: int
-    resolved_conversations: int
+    open_tickets: int
+    in_progress_tickets: int
+    pending_customer_tickets: int
+    resolved_tickets: int
+    urgent_tickets: int
     total_messages: int
     ai_resolved_percent: float
     avg_latency_ms: int
     total_agents: int
     total_knowledge_items: int
+    sla_compliance_percent: float
     recent_decisions_breakdown: Dict[str, int]

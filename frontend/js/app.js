@@ -1,418 +1,1005 @@
-// OmniSupport App State & Core Utilities
-const API_BASE = window.location.origin;
+/**
+ * OmniSupport Enterprise Helpdesk & Live Chat Client (Frappe / Linear Style)
+ */
 
-const state = {
-  activeTab: "tab-chat",
-  currentUser: null,
-  token: null,
-  conversations: [],
-  activeConversationId: null,
-  activeConversation: null,
-  aiSettings: null,
-  sites: [],
-  knowledgeItems: [],
-  cannedResponses: [],
-  users: [],
-  agentSocket: null
-};
+let currentConversation = null;
+let conversationsList = [];
+let agentsList = [];
+let currentUser = null;
+let activeFilter = 'all';
+let isInternalComposerMode = false;
+let agentSocket = null;
 
-// --- Auth Helper Headers ---
-function getAuthHeaders() {
-  const headers = { "Content-Type": "application/json" };
-  const token = localStorage.getItem("omni_token");
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-  return headers;
-}
-
-// --- Toast Notifications ---
-function showToast(message, type = "info") {
-  const container = document.getElementById("toast-container");
-  if (!container) return;
-
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `
-    <span>${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
-    <span>${message}</span>
-  `;
-
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
-}
-
-// --- Modals ---
-function openModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.add("open");
-}
-
-function closeModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove("open");
-}
-
-// --- Init Application ---
 document.addEventListener("DOMContentLoaded", async () => {
-  // Check auth user
-  initAuthSession();
+  // Check auth
+  await initAuth();
 
-  const navItems = document.querySelectorAll(".sidebar-nav .nav-item[data-tab]");
-  navItems.forEach(item => {
-    item.addEventListener("click", () => {
-      const targetTabId = item.getAttribute("data-tab");
-      switchTab(targetTabId);
-    });
-  });
+  // Bind navigation
+  initNavigation();
 
-  // Logout listener
-  const logoutBtn = document.getElementById("btn-logout");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", handleLogout);
-  }
+  // Initialize features
+  initTicketFilters();
+  initComposer();
+  initTicketActions();
+  initCannedResponses();
+  initKnowledgeBase();
+  initAISettings();
+  initTeamManagement();
+  initWebSockets();
 
-  // Init Modules
-  initChatModule();
-  initAnalyticsModule();
-  initCannedModule();
-  initTeamModule();
-  initAISettingsModule();
-  initKnowledgeModule();
-  initSitesModule();
-  initDocsModule();
+  // Initial data load
+  await loadAgents();
+  await loadConversations();
+  await loadAnalytics();
 });
 
-// --- Auth & Role Management ---
-function initAuthSession() {
-  const storedUser = localStorage.getItem("omni_user");
-  const storedToken = localStorage.getItem("omni_token");
+// --- Auth & Session ---
+async function initAuth() {
+  const token = localStorage.getItem("omni_token") || localStorage.getItem("token");
+  const storedUser = localStorage.getItem("omni_user") || localStorage.getItem("user");
 
-  if (storedUser && storedToken) {
-    try {
-      state.currentUser = JSON.parse(storedUser);
-      state.token = storedToken;
-    } catch (e) {
-      state.currentUser = { username: "admin", display_name: "مدیر ارشد", role: "admin" };
-    }
-  } else {
-    // Default to demo admin for seamless preview
-    state.currentUser = { username: "admin", display_name: "مدیر ارشد (Admin)", role: "admin" };
-  }
-
-  renderUserProfile();
-}
-
-function renderUserProfile() {
-  const user = state.currentUser;
-  if (!user) return;
-
-  const nameEl = document.getElementById("sidebar-user-name");
-  const roleEl = document.getElementById("sidebar-user-role");
-  const avatarEl = document.getElementById("sidebar-user-avatar");
-  const adminNavGroup = document.getElementById("admin-nav-group");
-
-  if (nameEl) nameEl.textContent = user.display_name || user.username;
-  
-  if (roleEl) {
-    if (user.role === "admin") {
-      roleEl.textContent = "👑 مدیر ارشد (Admin)";
-      roleEl.style.color = "#818cf8";
-    } else {
-      roleEl.textContent = "🎧 اپراتور پشتیبان (Member)";
-      roleEl.style.color = "#34d399";
-    }
-  }
-
-  if (avatarEl) {
-    const initial = (user.display_name || user.username || "A").charAt(0).toUpperCase();
-    avatarEl.querySelector("span").textContent = initial;
-  }
-
-  // Hide admin tabs if role is not admin!
-  if (adminNavGroup) {
-    if (user.role !== "admin") {
-      adminNavGroup.style.display = "none";
-    } else {
-      adminNavGroup.style.display = "block";
-    }
-  }
-}
-
-function handleLogout() {
-  if (confirm("آیا مایل به خروج از حساب کاربری هستید؟")) {
-    localStorage.removeItem("omni_token");
-    localStorage.removeItem("omni_user");
+  if (!token) {
     window.location.href = "/login";
-  }
-}
-
-function switchTab(tabId) {
-  state.activeTab = tabId;
-
-  document.querySelectorAll(".sidebar-nav .nav-item[data-tab]").forEach(el => {
-    el.classList.toggle("active", el.getAttribute("data-tab") === tabId);
-  });
-
-  document.querySelectorAll(".content-tab").forEach(tab => {
-    tab.classList.toggle("active", tab.id === tabId);
-  });
-
-  if (tabId === "tab-chat") {
-    loadConversations();
-  } else if (tabId === "tab-analytics") {
-    loadAnalytics();
-  } else if (tabId === "tab-canned") {
-    loadCannedResponses();
-  } else if (tabId === "tab-team") {
-    loadTeamUsers();
-  } else if (tabId === "tab-ai-settings") {
-    loadAISettings();
-    loadDecisionLogs();
-  } else if (tabId === "tab-knowledge") {
-    loadKnowledgeItems();
-  } else if (tabId === "tab-sites") {
-    loadSitesData();
-  }
-}
-
-// --- Analytics Module ---
-function initAnalyticsModule() {
-  const refreshBtn = document.getElementById("btn-refresh-analytics");
-  if (refreshBtn) {
-    refreshBtn.addEventListener("click", loadAnalytics);
-  }
-}
-
-async function loadAnalytics() {
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/analytics/overview`);
-    if (!res.ok) return;
-    const data = await res.json();
-
-    document.getElementById("kpi-ai-rate").textContent = `${data.ai_resolved_percent}%`;
-    document.getElementById("kpi-total-convs").textContent = data.total_conversations;
-    document.getElementById("kpi-pending-human").textContent = data.pending_human;
-    document.getElementById("kpi-avg-latency").textContent = `${data.avg_latency_ms}ms`;
-
-    const b = data.recent_decisions_breakdown || {};
-    document.getElementById("count-auto-answer").textContent = b.AUTO_ANSWER || 0;
-    document.getElementById("count-suggest").textContent = b.SUGGEST_TO_AGENT || 0;
-    document.getElementById("count-transfer").textContent = b.TRANSFER_TO_HUMAN || 0;
-  } catch (err) {
-    console.error("Analytics load error:", err);
-  }
-}
-
-// --- Canned Responses Module ---
-function initCannedModule() {
-  const openBtn = document.getElementById("btn-open-add-canned");
-  if (openBtn) {
-    openBtn.addEventListener("click", () => openModal("modal-add-canned"));
-  }
-
-  const form = document.getElementById("form-create-canned");
-  if (form) {
-    form.addEventListener("submit", submitCannedResponse);
-  }
-
-  loadCannedResponses();
-}
-
-async function loadCannedResponses() {
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/canned-responses`);
-    if (!res.ok) return;
-    const items = await res.json();
-    state.cannedResponses = items;
-    renderCannedGrid(items);
-    renderChatQuickReplies(items);
-  } catch (err) {
-    console.error("Canned err:", err);
-  }
-}
-
-function renderCannedGrid(items) {
-  const container = document.getElementById("canned-grid-list");
-  if (!container) return;
-
-  if (items.length === 0) {
-    container.innerHTML = `<div style="grid-column: span 3; text-align: center; color: var(--text-light); padding: 30px;">پاسخ آماده‌ای تعریف نشده است.</div>`;
     return;
   }
 
-  container.innerHTML = items.map(i => `
-    <div class="kb-card">
-      <div class="kb-card-header">
-        <h4 class="kb-card-title">${escapeHtml(i.title)}</h4>
-        ${i.shortcut ? `<span class="kb-badge manual">${escapeHtml(i.shortcut)}</span>` : ''}
-      </div>
-      <div class="kb-card-content">${escapeHtml(i.content)}</div>
-      <div class="kb-card-footer">
-        <button class="chat-action-btn" style="padding: 2px 8px; font-size: 11px; color: var(--danger); border-color: #fecaca;" onclick="deleteCannedResponse('${i.id}')">حذف</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-function renderChatQuickReplies(items) {
-  const container = document.getElementById("chat-quick-replies-list");
-  if (!container) return;
-
-  container.innerHTML = `
-    <span style="font-size: 11px; color: var(--text-muted); align-self: center;">پاسخ‌های آماده:</span>
-  ` + items.map(i => `
-    <div class="quick-chip" onclick="insertQuickReply('${escapeQuote(i.content)}')">${escapeHtml(i.title)}</div>
-  `).join("");
-}
-
-async function submitCannedResponse(e) {
-  e.preventDefault();
-  const title = document.getElementById("canned-title").value.trim();
-  const shortcut = document.getElementById("canned-shortcut").value.trim();
-  const content = document.getElementById("canned-content").value.trim();
-
   try {
-    const res = await fetch(`${API_BASE}/api/v1/canned-responses`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, shortcut, content })
+    currentUser = storedUser ? JSON.parse(storedUser) : null;
+    if (!currentUser) {
+      const res = await fetch("/api/v1/auth/me", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        currentUser = await res.json();
+        localStorage.setItem("user", JSON.stringify(currentUser));
+      } else {
+        localStorage.clear();
+        window.location.href = "/login";
+        return;
+      }
+    }
+
+    // Render User Info in sidebar
+    document.getElementById("current-agent-name").textContent = currentUser.display_name || currentUser.username;
+    document.getElementById("current-agent-role").textContent = 
+      currentUser.role === "admin" ? "مدیر ارشد سیستم (Admin)" : "کارشناس پشتیبانی (Agent)";
+    document.getElementById("current-agent-avatar").querySelector("span").textContent = 
+      (currentUser.display_name || currentUser.username).charAt(0);
+
+    // Role-based visibility
+    if (currentUser.role !== "admin") {
+      const adminTabs = ["nav-analytics", "nav-ai-settings", "nav-team"];
+      adminTabs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
+    }
+
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "/login";
+    });
+
+  } catch (err) {
+    console.error("Auth init error:", err);
+  }
+}
+
+// --- Navigation Tabs ---
+function initNavigation() {
+  const navItems = document.querySelectorAll(".sidebar-nav .nav-item[data-tab]");
+  const contentTabs = document.querySelectorAll(".content-tab");
+
+  navItems.forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const tabId = item.getAttribute("data-tab");
+
+      navItems.forEach(n => n.classList.remove("active"));
+      contentTabs.forEach(t => t.classList.remove("active"));
+
+      item.classList.add("active");
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add("active");
+
+      // Auto refresh on tab activation
+      if (tabId === "analytics") loadAnalytics();
+      if (tabId === "canned") loadCannedList();
+      if (tabId === "knowledge") loadKnowledgeList();
+      if (tabId === "team") loadTeamList();
+    });
+  });
+}
+
+// --- Helpdesk Tickets List & Filters ---
+function initTicketFilters() {
+  const filterTabs = document.querySelectorAll(".filter-tab");
+  filterTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      filterTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeFilter = tab.getAttribute("data-filter");
+      renderConversationsList();
+    });
+  });
+
+  const searchInput = document.getElementById("conv-search-input");
+  searchInput.addEventListener("input", () => {
+    renderConversationsList();
+  });
+}
+
+async function loadAgents() {
+  try {
+    const token = localStorage.getItem("omni_token") || localStorage.getItem("token");
+    const res = await fetch("/api/v1/auth/users", {
+      headers: { "Authorization": `Bearer ${token}` }
     });
     if (res.ok) {
-      closeModal("modal-add-canned");
-      document.getElementById("form-create-canned").reset();
-      showToast("پاسخ آماده جدید ذخیره شد!", "success");
-      loadCannedResponses();
+      agentsList = await res.json();
+      const select = document.getElementById("select-ticket-agent");
+      select.innerHTML = '<option value="">بدون مسئول (تخصیص نیافته)</option>' +
+        agentsList.map(a => `<option value="${a.id}">${a.display_name} (${a.role})</option>`).join("");
     }
   } catch (err) {
-    showToast("خطا در ذخیره پاسخ آماده.", "error");
+    console.warn("Failed to load agents list:", err);
   }
 }
 
-async function deleteCannedResponse(id) {
-  if (!confirm("آیا از حذف این پاسخ آماده اطمینان دارید؟")) return;
+async function loadConversations() {
   try {
-    await fetch(`${API_BASE}/api/v1/canned-responses/${id}`, { method: "DELETE" });
-    showToast("حذف شد.", "info");
-    loadCannedResponses();
+    const res = await fetch("/api/v1/chat/conversations");
+    if (res.ok) {
+      conversationsList = await res.json();
+      updateBadgeCounts();
+      renderConversationsList();
+      if (!currentConversation && conversationsList.length > 0) {
+        selectConversation(conversationsList[0].id);
+      }
+    }
   } catch (err) {
-    showToast("خطا در حذف.", "error");
+    console.error("Load conversations error:", err);
   }
 }
 
-// --- Team & Users Management Module ---
-function initTeamModule() {
-  const openBtn = document.getElementById("btn-open-add-user");
-  if (openBtn) {
-    openBtn.addEventListener("click", () => openModal("modal-add-user"));
-  }
+function updateBadgeCounts() {
+  const openCount = conversationsList.filter(c => c.status === "open" || c.status === "in_progress").length;
+  const badge = document.getElementById("open-tickets-badge");
+  if (badge) badge.textContent = openCount;
 
-  const form = document.getElementById("form-create-user");
-  if (form) {
-    form.addEventListener("submit", submitNewUser);
-  }
+  const totalCount = document.getElementById("total-tickets-count");
+  if (totalCount) totalCount.textContent = `${conversationsList.length} تیکت`;
 }
 
-async function loadTeamUsers() {
-  const tbody = document.getElementById("team-users-tbody");
-  if (!tbody) return;
+function renderConversationsList() {
+  const container = document.getElementById("conv-items-container");
+  const searchQuery = (document.getElementById("conv-search-input").value || "").trim().toLowerCase();
 
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/auth/users`, {
-      headers: getAuthHeaders()
+  let filtered = conversationsList.filter(c => {
+    // 1. Tab Filter
+    if (activeFilter === "mine") {
+      if (c.assigned_agent_id !== (currentUser ? currentUser.id : null)) return false;
+    } else if (activeFilter === "unassigned") {
+      if (c.assigned_agent_id) return false;
+    } else if (activeFilter === "urgent") {
+      if (c.priority !== "urgent") return false;
+    } else if (activeFilter === "resolved") {
+      if (c.status !== "resolved" && c.status !== "closed") return false;
+    }
+
+    // 2. Search Query
+    if (searchQuery) {
+      const matchNumber = (c.ticket_number || "").toLowerCase().includes(searchQuery);
+      const matchSubject = (c.subject || "").toLowerCase().includes(searchQuery);
+      const matchCustomer = (c.customer_name || "").toLowerCase().includes(searchQuery);
+      const matchEmail = (c.customer_email || "").toLowerCase().includes(searchQuery);
+      if (!matchNumber && !matchSubject && !matchCustomer && !matchEmail) return false;
+    }
+
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="padding: 32px 16px; text-align: center; color: #94a3b8; font-size: 13px;">
+        تیکتی در این دسته‌بندی یافت نشد.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(c => {
+    const isActive = currentConversation && currentConversation.id === c.id;
+    const lastMsg = (c.messages && c.messages.length > 0) ? c.messages[c.messages.length - 1].content : "بدون پیام";
+    const timeFormatted = new Date(c.last_message_at || c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // Priority badge
+    const prioLabel = c.priority === "urgent" ? "بحرانی 🔥" :
+                      c.priority === "high" ? "اولویت بالا" :
+                      c.priority === "low" ? "اولویت کم" : "متوسط";
+
+    // Status label
+    const statusLabel = c.status === "open" ? "باز" :
+                        c.status === "in_progress" ? "در حال بررسی" :
+                        c.status === "pending_customer" ? "در انتظار مشتری" :
+                        c.status === "resolved" ? "حل‌شده" : "بسته";
+
+    return `
+      <div class="ticket-item ${isActive ? 'active' : ''}" data-id="${c.id}">
+        <div class="ticket-item-top">
+          <span class="ticket-code">${c.ticket_number || 'HD-1000'}</span>
+          <span class="ticket-time">${timeFormatted}</span>
+        </div>
+        <div class="ticket-subject">${c.subject || 'درخواست جدید'}</div>
+        <div class="ticket-preview">${c.customer_name}: ${lastMsg}</div>
+        <div class="ticket-badges-row">
+          <span class="status-pill ${c.status}">${statusLabel}</span>
+          <span class="prio-pill ${c.priority}">${prioLabel}</span>
+          ${c.sentiment === 'frustrated' ? '<span class="sentiment-badge frustrated">⚠️ شاکی</span>' : ''}
+          ${c.assigned_agent_name ? `<span style="font-size: 10.5px; color: #475569;">👤 ${c.assigned_agent_name.split(" ")[0]}</span>` : '<span style="font-size: 10.5px; color: #94a3b8;">(بدون مسئول)</span>'}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  container.querySelectorAll(".ticket-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const convId = item.getAttribute("data-id");
+      selectConversation(convId);
     });
-    if (!res.ok) {
-      tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: var(--danger);">نیاز به دسترسی مدیر سیستم (Admin) است.</td></tr>`;
+  });
+}
+
+// --- Select and View Ticket ---
+async function selectConversation(convId) {
+  try {
+    const res = await fetch(`/api/v1/chat/conversations/${convId}`);
+    if (!res.ok) return;
+
+    currentConversation = await res.json();
+    renderConversationsList(); // refresh active highlight
+
+    // Header updates
+    document.getElementById("active-ticket-code").textContent = currentConversation.ticket_number || "HD-1001";
+    document.getElementById("active-ticket-subject").textContent = currentConversation.subject || "درخواست پشتیبانی";
+    document.getElementById("active-customer-name").textContent = currentConversation.customer_name || "کاربر مهمان";
+    
+    // Select dropdowns
+    document.getElementById("select-ticket-priority").value = currentConversation.priority || "medium";
+    document.getElementById("select-ticket-status").value = currentConversation.status || "open";
+    document.getElementById("select-ticket-agent").value = currentConversation.assigned_agent_id || "";
+
+    // SLA display
+    const slaEl = document.getElementById("active-sla-status");
+    if (currentConversation.priority === "urgent") {
+      slaEl.textContent = "مهلت SLA: ۲ ساعت (بحرانی)";
+      slaEl.style.color = "#ef4444";
+    } else {
+      slaEl.textContent = "مهلت SLA: استاندارد (۸ ساعت)";
+      slaEl.style.color = "#6366f1";
+    }
+
+    // Render Feed (Messages + Timeline)
+    renderTicketFeed();
+
+    // Render Inspector Sidebar
+    renderInspector();
+
+  } catch (err) {
+    console.error("Select conversation error:", err);
+  }
+}
+
+function renderTicketFeed() {
+  const feed = document.getElementById("ticket-feed");
+  if (!currentConversation) {
+    feed.innerHTML = "";
+    return;
+  }
+
+  const items = [];
+
+  // 1. Add Messages
+  if (currentConversation.messages) {
+    currentConversation.messages.forEach(m => {
+      items.push({
+        type: "message",
+        date: new Date(m.created_at),
+        data: m
+      });
+    });
+  }
+
+  // 2. Add Activities
+  if (currentConversation.activities) {
+    currentConversation.activities.forEach(a => {
+      items.push({
+        type: "activity",
+        date: new Date(a.created_at),
+        data: a
+      });
+    });
+  }
+
+  // Sort chronologically
+  items.sort((a, b) => a.date - b.date);
+
+  feed.innerHTML = items.map(item => {
+    if (item.type === "activity") {
+      return `
+        <div class="timeline-event-row">
+          <span>⚙️ ${item.data.details} (${item.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>
+        </div>
+      `;
+    }
+
+    const m = item.data;
+    const isCustomer = m.sender_type === "customer";
+    const isAi = m.sender_type === "ai";
+    const isInternal = m.is_internal;
+    const senderRole = isInternal ? "internal" : isCustomer ? "customer" : isAi ? "ai" : "agent";
+    const timeStr = item.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    return `
+      <div class="agent-msg-row ${senderRole}">
+        <div class="agent-msg-bubble">
+          ${isInternal ? '<div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">🔒 یادداشت محرمانه داخلی کارشناسان</div>' : ''}
+          <div>${escapeHtml(m.content)}</div>
+          <div style="font-size: 10.5px; opacity: 0.75; margin-top: 4px; display: flex; justify-content: space-between;">
+            <span>${m.sender_name}</span>
+            <span>${timeStr}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function renderInspector() {
+  if (!currentConversation) return;
+
+  const c = currentConversation;
+  
+  // AI section
+  const sentEl = document.getElementById("inspect-sentiment");
+  sentEl.className = `sentiment-badge ${c.sentiment}`;
+  sentEl.textContent = c.sentiment === "frustrated" ? "ناراضی / عصبانی ⚠️" :
+                       c.sentiment === "positive" ? "بسیار راضی 🌟" : "عادی / خنثی";
+
+  document.getElementById("inspect-ai-summary").textContent = 
+    c.ai_summary || "هنوز خلاصه‌ای ثبت نشده است. روی دکمه 'خلاصه هوشمند' کلیک کنید.";
+
+  // Ticket info
+  document.getElementById("inspect-ticket-num").textContent = c.ticket_number || "HD-1001";
+  document.getElementById("inspect-status").textContent = c.status;
+  document.getElementById("inspect-priority").textContent = c.priority;
+  document.getElementById("inspect-agent-name").textContent = c.assigned_agent_name || "تخصیص نیافته";
+  document.getElementById("inspect-created-at").textContent = new Date(c.created_at).toLocaleString("fa-IR");
+
+  // Customer info
+  document.getElementById("inspect-customer-name").textContent = c.customer_name;
+  document.getElementById("inspect-customer-email").textContent = c.customer_email || "-";
+  document.getElementById("inspect-customer-phone").textContent = c.customer_phone || "-";
+  document.getElementById("inspect-customer-page").textContent = c.current_page || "/";
+  document.getElementById("inspect-customer-device").textContent = c.customer_device || "مرورگر وب";
+}
+
+// --- Ticket Actions: Assign, Status, Priority, Summarize ---
+function initTicketActions() {
+  // 1. Assign Agent
+  const selectAgent = document.getElementById("select-ticket-agent");
+  selectAgent.addEventListener("change", async () => {
+    if (!currentConversation) return;
+    const agentId = selectAgent.value;
+    if (!agentId) return;
+
+    try {
+      const res = await fetch(`/api/v1/chat/conversations/${currentConversation.id}/assign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agent_id: agentId })
+      });
+      if (res.ok) {
+        showToast("تیکت با موفقیت به کارشناس واگذار شد.", "success");
+        await selectConversation(currentConversation.id);
+        await loadConversations();
+      }
+    } catch (err) {
+      showToast("خطا در واگذاری تیکت: " + err.message, "error");
+    }
+  });
+
+  // 2. Change Status
+  const selectStatus = document.getElementById("select-ticket-status");
+  selectStatus.addEventListener("change", async () => {
+    if (!currentConversation) return;
+    const newStatus = selectStatus.value;
+
+    try {
+      const res = await fetch(`/api/v1/chat/conversations/${currentConversation.id}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        showToast(`وضعیت تیکت به ${newStatus} تغییر یافت.`, "info");
+        await selectConversation(currentConversation.id);
+        await loadConversations();
+      }
+    } catch (err) {
+      showToast("خطا در تغییر وضعیت: " + err.message, "error");
+    }
+  });
+
+  // 3. Change Priority
+  const selectPriority = document.getElementById("select-ticket-priority");
+  selectPriority.addEventListener("change", async () => {
+    if (!currentConversation) return;
+    const newPrio = selectPriority.value;
+
+    try {
+      const res = await fetch(`/api/v1/chat/conversations/${currentConversation.id}/priority`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priority: newPrio })
+      });
+      if (res.ok) {
+        showToast(`اولویت تیکت تغییر یافت.`, "info");
+        await selectConversation(currentConversation.id);
+        await loadConversations();
+      }
+    } catch (err) {
+      showToast("خطا در تغییر اولویت: " + err.message, "error");
+    }
+  });
+
+  // 4. AI Executive Summarize Button
+  document.getElementById("btn-ai-summarize").addEventListener("click", async () => {
+    if (!currentConversation) return;
+    const btn = document.getElementById("btn-ai-summarize");
+    btn.textContent = "⏳ در حال تولید خلاصه...";
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`/api/v1/chat/conversations/${currentConversation.id}/ai-summarize`, {
+        method: "POST"
+      });
+      if (res.ok) {
+        const data = await res.json();
+        currentConversation.ai_summary = data.summary;
+        document.getElementById("inspect-ai-summary").textContent = data.summary;
+        showToast("خلاصه هوشمند با موفقیت تولید شد!", "success");
+      }
+    } catch (err) {
+      showToast("خطا در تولید خلاصه: " + err.message, "error");
+    } finally {
+      btn.textContent = "🤖 خلاصه هوشمند";
+      btn.disabled = false;
+    }
+  });
+
+  // 5. Learn from Agent response button
+  document.getElementById("btn-learn-from-this-ticket").addEventListener("click", async () => {
+    if (!currentConversation || !currentConversation.messages || currentConversation.messages.length === 0) {
+      showToast("پیامی برای یادگیری وجود ندارد.", "info");
       return;
     }
-    const users = await res.json();
-    state.users = users;
 
-    tbody.innerHTML = users.map(u => {
-      const isSelf = state.currentUser && state.currentUser.username === u.username;
-      const roleBadge = u.role === "admin" ? 
-        '<span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">👑 مدیر ارشد (Admin)</span>' : 
-        '<span style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;">🎧 اپراتور (Agent Member)</span>';
+    const lastCust = [...currentConversation.messages].reverse().find(m => m.sender_type === "customer");
+    const lastAgent = [...currentConversation.messages].reverse().find(m => m.sender_type === "agent" && !m.is_internal);
 
-      const statusBadge = u.is_active ? 
-        '<span style="color: #10b981; font-weight: 600;">● فعال</span>' : 
-        '<span style="color: #ef4444; font-weight: 600;">● غیرفعال</span>';
+    if (!lastCust || !lastAgent) {
+      showToast("مکالمه باید شامل حداقل یک پیام مشتری و یک پاسخ کارشناس باشد.", "info");
+      return;
+    }
 
-      return `
-        <tr style="border-bottom: 1px solid var(--border);">
-          <td style="padding: 12px 14px; font-weight: 600;">${escapeHtml(u.display_name)} ${isSelf ? '<small style="color: var(--primary);">(شما)</small>' : ''}</td>
-          <td style="padding: 12px 14px; font-family: monospace;">${escapeHtml(u.username)}</td>
-          <td style="padding: 12px 14px; color: var(--text-muted);">${escapeHtml(u.email || '-')}</td>
-          <td style="padding: 12px 14px;">${roleBadge}</td>
-          <td style="padding: 12px 14px;">${statusBadge}</td>
-          <td style="padding: 12px 14px;">
-            ${!isSelf ? `<button class="chat-action-btn" style="padding: 2px 8px; font-size: 11px; color: var(--danger); border-color: #fecaca;" onclick="deleteTeamUser('${u.id}')">حذف</button>` : '-'}
-          </td>
-        </tr>
-      `;
-    }).join("");
-
-  } catch (err) {
-    console.error("Team load err:", err);
-  }
+    try {
+      const res = await fetch(`/api/v1/chat/conversations/${currentConversation.id}/learn`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversation_id: currentConversation.id,
+          customer_question: lastCust.content,
+          agent_answer: lastAgent.content,
+          title: `پاسخ به: ${lastCust.content.slice(0, 40)}...`,
+          category: "agent_learned"
+        })
+      });
+      if (res.ok) {
+        showToast("پاسخ شما در پایگاه یادگیری هوش مصنوعی ذخیره شد!", "success");
+        await selectConversation(currentConversation.id);
+      }
+    } catch (err) {
+      showToast("خطا در ذخیره یادگیری: " + err.message, "error");
+    }
+  });
 }
 
-async function submitNewUser(e) {
-  e.preventDefault();
-  const username = document.getElementById("new-user-username").value.trim();
-  const display_name = document.getElementById("new-user-name").value.trim();
-  const email = document.getElementById("new-user-email").value.trim();
-  const role = document.getElementById("new-user-role").value;
-  const password = document.getElementById("new-user-password").value;
+// --- Composer: Public Reply vs Internal Note ---
+function initComposer() {
+  const publicTab = document.getElementById("tab-btn-public");
+  const internalTab = document.getElementById("tab-btn-internal");
+  const textarea = document.getElementById("agent-reply-input");
+  const sendBtn = document.getElementById("btn-send-agent-reply");
+  const hint = document.getElementById("composer-hint");
+
+  publicTab.addEventListener("click", () => {
+    isInternalComposerMode = false;
+    publicTab.classList.add("active");
+    internalTab.classList.remove("active");
+    textarea.classList.remove("internal-mode");
+    textarea.placeholder = "متن پیام خود را بنویسید (برای ارسال Ctrl+Enter بزنید)...";
+    sendBtn.classList.remove("internal-send");
+    sendBtn.querySelector("span").textContent = "ارسال پاسخ به کاربر";
+    hint.textContent = "پیام شما به عنوان پاسخ رسمی برای کاربر ارسال می‌شود.";
+  });
+
+  internalTab.addEventListener("click", () => {
+    isInternalComposerMode = true;
+    internalTab.classList.add("active");
+    publicTab.classList.remove("active");
+    textarea.classList.add("internal-mode");
+    textarea.placeholder = "یادداشت محرمانه داخلی (فقط برای اعضای تیم و مدیران قابل مشاهده است)...";
+    sendBtn.classList.add("internal-send");
+    sendBtn.querySelector("span").textContent = "ثبت یادداشت داخلی";
+    hint.textContent = "این یادداشت برای کاربر نمایش داده نمی‌شود و فقط درون پنل ذخیره می‌گردد.";
+  });
+
+  sendBtn.addEventListener("click", sendComposerMessage);
+  textarea.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      sendComposerMessage();
+    }
+  });
+
+  // Quick Chips
+  document.querySelectorAll(".quick-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const text = chip.getAttribute("data-text");
+      textarea.value = text;
+      textarea.focus();
+    });
+  });
+}
+
+async function sendComposerMessage() {
+  if (!currentConversation) {
+    showToast("لطفاً ابتدا یک تیکت را انتخاب کنید.", "info");
+    return;
+  }
+
+  const textarea = document.getElementById("agent-reply-input");
+  const content = textarea.value.trim();
+  if (!content) return;
+
+  const btn = document.getElementById("btn-send-agent-reply");
+  btn.disabled = true;
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/auth/users`, {
+    let url = `/api/v1/chat/conversations/${currentConversation.id}/messages`;
+    let body = {
+      content: content,
+      sender_type: "agent",
+      sender_name: currentUser ? currentUser.display_name : "کارشناس پشتیبانی",
+      is_internal: isInternalComposerMode
+    };
+
+    if (isInternalComposerMode) {
+      url = `/api/v1/chat/conversations/${currentConversation.id}/notes`;
+      body = { content: content };
+    }
+
+    const res = await fetch(url, {
       method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ username, display_name, email, role, password })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
     });
 
     if (res.ok) {
-      closeModal("modal-add-user");
-      document.getElementById("form-create-user").reset();
-      showToast("عضو جدید تیم پشتیبانی با موفقیت اضافه شد!", "success");
-      loadTeamUsers();
-    } else {
-      const err = await res.json();
-      showToast(err.detail || "خطا در ایجاد کاربر.", "error");
+      textarea.value = "";
+      await selectConversation(currentConversation.id);
+      await loadConversations();
     }
   } catch (err) {
-    showToast("خطای ارتباط با سرور.", "error");
+    showToast("خطا در ارسال: " + err.message, "error");
+  } finally {
+    btn.disabled = false;
   }
 }
 
-async function deleteTeamUser(id) {
-  if (!confirm("آیا از حذف این کاربر اطمینان دارید؟")) return;
+// --- WebSocket Live Agent Stream ---
+function initWebSockets() {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const wsUrl = `${protocol}//${window.location.host}/api/v1/chat/ws/agent`;
+
   try {
-    const res = await fetch(`${API_BASE}/api/v1/auth/users/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders()
+    agentSocket = new WebSocket(wsUrl);
+
+    agentSocket.onopen = () => {
+      console.log("WebSocket connected to agent channel.");
+    };
+
+    agentSocket.onmessage = (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+        const { event: evtType, data } = payload;
+
+        if (evtType === "new_conversation") {
+          loadConversations();
+          showToast(`تیکت جدید: ${data.ticket_number || ''} از ${data.customer_name}`, "info");
+        } else if (evtType === "new_message") {
+          if (currentConversation && currentConversation.id === data.conversation_id) {
+            selectConversation(currentConversation.id);
+          } else {
+            loadConversations();
+          }
+        } else if (evtType === "ticket_updated") {
+          if (currentConversation && currentConversation.id === data.id) {
+            selectConversation(currentConversation.id);
+          }
+          loadConversations();
+        } else if (evtType === "ai_decision") {
+          if (currentConversation && currentConversation.id === data.conversation_id) {
+            document.getElementById("inspect-decision").textContent = data.action;
+            document.getElementById("inspect-confidence").textContent = `${Math.round(data.confidence * 100)}%`;
+          }
+        }
+      } catch (e) {
+        console.error("WS Parse error:", e);
+      }
+    };
+
+    agentSocket.onclose = () => {
+      setTimeout(initWebSockets, 3000);
+    };
+  } catch (err) {
+    console.warn("WebSocket init error:", err);
+  }
+}
+
+// --- Analytics & SLA ---
+async function loadAnalytics() {
+  try {
+    const res = await fetch("/api/v1/analytics/overview");
+    if (!res.ok) return;
+
+    const data = await res.json();
+    document.getElementById("stat-total-convs").textContent = data.total_conversations;
+    document.getElementById("stat-open-tickets").textContent = data.open_tickets + data.in_progress_tickets;
+    document.getElementById("stat-ai-resolved").textContent = `${data.ai_resolved_percent}%`;
+    document.getElementById("stat-avg-latency").textContent = `${data.avg_latency_ms} ms`;
+
+    // TypeSafe breakdown
+    const b = data.recent_decisions_breakdown || {};
+    document.getElementById("stat-action-auto").textContent = b.AUTO_ANSWER || 0;
+    document.getElementById("stat-action-suggest").textContent = b.SUGGEST_TO_AGENT || 0;
+    document.getElementById("stat-action-transfer").textContent = b.TRANSFER_TO_HUMAN || 0;
+    document.getElementById("stat-action-clarify").textContent = b.CLARIFY || 0;
+
+  } catch (err) {
+    console.warn("Failed to load analytics:", err);
+  }
+}
+
+// --- Canned Responses ---
+function initCannedResponses() {
+  document.getElementById("btn-open-create-canned").addEventListener("click", () => {
+    openModal("modal-add-canned");
+  });
+
+  document.getElementById("form-create-canned").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("canned-input-title").value.trim();
+    const shortcut = document.getElementById("canned-input-shortcut").value.trim();
+    const content = document.getElementById("canned-input-content").value.trim();
+
+    try {
+      const res = await fetch("/api/v1/canned", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, shortcut, content })
+      });
+      if (res.ok) {
+        closeModal("modal-add-canned");
+        document.getElementById("form-create-canned").reset();
+        showToast("پاسخ آماده ذخیره شد.", "success");
+        loadCannedList();
+      }
+    } catch (err) {
+      showToast("خطا در ذخیره پاسخ آماده: " + err.message, "error");
+    }
+  });
+}
+
+async function loadCannedList() {
+  const container = document.getElementById("canned-responses-grid");
+  try {
+    const res = await fetch("/api/v1/canned");
+    if (!res.ok) return;
+    const items = await res.json();
+
+    container.innerHTML = items.map(c => `
+      <div class="kb-card">
+        <div class="kb-card-header">
+          <span class="kb-card-title">${escapeHtml(c.title)}</span>
+          <span class="kb-badge manual">${escapeHtml(c.shortcut || '/')}</span>
+        </div>
+        <div class="kb-card-content">${escapeHtml(c.content)}</div>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.warn("Load canned error:", err);
+  }
+}
+
+// --- Knowledge Base ---
+function initKnowledgeBase() {
+  document.getElementById("btn-open-add-kb").addEventListener("click", () => {
+    openModal("modal-add-kb");
+  });
+
+  document.getElementById("form-create-kb").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const title = document.getElementById("kb-input-title").value.trim();
+    const content = document.getElementById("kb-input-content").value.trim();
+    const category = document.getElementById("kb-input-category").value;
+
+    try {
+      const res = await fetch("/api/v1/knowledge", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content, category, source: "manual" })
+      });
+      if (res.ok) {
+        closeModal("modal-add-kb");
+        document.getElementById("form-create-kb").reset();
+        showToast("دانش جدید با موفقیت ذخیره شد.", "success");
+        loadKnowledgeList();
+      }
+    } catch (err) {
+      showToast("خطا در ایجاد دانش: " + err.message, "error");
+    }
+  });
+}
+
+async function loadKnowledgeList() {
+  const container = document.getElementById("kb-items-grid");
+  try {
+    const res = await fetch("/api/v1/knowledge");
+    if (!res.ok) return;
+    const items = await res.json();
+
+    container.innerHTML = items.map(item => `
+      <div class="kb-card">
+        <div class="kb-card-header">
+          <span class="kb-card-title">${escapeHtml(item.title)}</span>
+          <span class="kb-badge ${item.source === 'agent_learned' ? 'learned' : 'manual'}">
+            ${item.source === 'agent_learned' ? 'یادگیری از کارشناس' : 'دستی'}
+          </span>
+        </div>
+        <div class="kb-card-content">${escapeHtml(item.content)}</div>
+        <div class="kb-card-footer">
+          <span>دسته: ${item.category}</span>
+          <span>استفاده: ${item.usage_count} بار</span>
+        </div>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.warn("Load KB error:", err);
+  }
+}
+
+// --- AI Settings ---
+function initAISettings() {
+  loadAISettings();
+
+  // Presets
+  const presetCards = document.querySelectorAll(".preset-card");
+  presetCards.forEach(card => {
+    card.addEventListener("click", () => {
+      presetCards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+      const preset = card.getAttribute("data-preset");
+
+      if (preset === "openai") {
+        document.getElementById("ai-provider-name").value = "OpenAI";
+        document.getElementById("ai-base-url").value = "https://api.openai.com/v1";
+        document.getElementById("ai-model-name").value = "gpt-4o-mini";
+      } else if (preset === "openrouter") {
+        document.getElementById("ai-provider-name").value = "OpenRouter";
+        document.getElementById("ai-base-url").value = "https://openrouter.ai/api/v1";
+        document.getElementById("ai-model-name").value = "meta-llama/llama-3.3-70b-instruct";
+      } else if (preset === "groq") {
+        document.getElementById("ai-provider-name").value = "Groq Fast";
+        document.getElementById("ai-base-url").value = "https://api.groq.com/openai/v1";
+        document.getElementById("ai-model-name").value = "llama-3.3-70b-versatile";
+      } else if (preset === "ollama") {
+        document.getElementById("ai-provider-name").value = "Ollama Local";
+        document.getElementById("ai-base-url").value = "http://localhost:11434/v1";
+        document.getElementById("ai-model-name").value = "llama3.2";
+      }
     });
-    if (res.ok) {
-      showToast("عضو تیم با موفقیت حذف گردید.", "info");
-      loadTeamUsers();
+  });
+
+  // Test AI Connection
+  document.getElementById("btn-test-ai-connection").addEventListener("click", async () => {
+    const baseUrl = document.getElementById("ai-base-url").value.trim();
+    const apiKey = document.getElementById("ai-api-key").value.trim();
+    const modelName = document.getElementById("ai-model-name").value.trim();
+    const btn = document.getElementById("btn-test-ai-connection");
+
+    btn.textContent = "در حال تست...";
+    btn.disabled = true;
+
+    try {
+      const res = await fetch("/api/v1/ai/test-provider", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ base_url: baseUrl, api_key: apiKey, model_name: modelName })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast(`اتصال برقرار شد! پاسخ در ${data.latency_ms}ms`, "success");
+      } else {
+        showToast("اتصال برقرار نشد: " + (data.message || "خطای نامشخص"), "error");
+      }
+    } catch (err) {
+      showToast("خطای شبکه در تست اتصال: " + err.message, "error");
+    } finally {
+      btn.textContent = "تست اتصال به ارائه‌دهنده";
+      btn.disabled = false;
     }
+  });
+
+  // Save AI Settings
+  document.getElementById("ai-settings-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const payload = {
+      provider_name: document.getElementById("ai-provider-name").value.trim(),
+      base_url: document.getElementById("ai-base-url").value.trim(),
+      api_key: document.getElementById("ai-api-key").value.trim() || undefined,
+      model_name: document.getElementById("ai-model-name").value.trim(),
+      system_prompt: document.getElementById("ai-system-prompt").value.trim(),
+      enable_typesafe_decision: document.getElementById("ai-toggle-typesafe").checked,
+      enable_agent_learning: document.getElementById("ai-toggle-learning").checked
+    };
+
+    try {
+      const res = await fetch("/api/v1/ai/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        showToast("تنظیمات هوش مصنوعی با موفقیت بروزرسانی شد.", "success");
+      }
+    } catch (err) {
+      showToast("خطا در ذخیره تنظیمات: " + err.message, "error");
+    }
+  });
+}
+
+async function loadAISettings() {
+  try {
+    const res = await fetch("/api/v1/ai/settings");
+    if (!res.ok) return;
+    const data = await res.json();
+
+    document.getElementById("ai-provider-name").value = data.provider_name || "";
+    document.getElementById("ai-base-url").value = data.base_url || "";
+    document.getElementById("ai-model-name").value = data.model_name || "";
+    document.getElementById("ai-system-prompt").value = data.system_prompt || "";
+    document.getElementById("ai-toggle-typesafe").checked = data.enable_typesafe_decision;
+    document.getElementById("ai-toggle-learning").checked = data.enable_agent_learning;
   } catch (err) {
-    showToast("خطا در حذف کاربر.", "error");
+    console.warn("Load AI settings error:", err);
   }
 }
 
-async function copySnippet(elementId) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  const text = el.innerText || el.textContent;
+// --- Team Management ---
+function initTeamManagement() {
+  document.getElementById("btn-open-create-agent").addEventListener("click", () => {
+    openModal("modal-add-agent");
+  });
+
+  document.getElementById("form-create-agent").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("omni_token") || localStorage.getItem("token");
+    const display_name = document.getElementById("agent-input-name").value.trim();
+    const username = document.getElementById("agent-input-username").value.trim();
+    const password = document.getElementById("agent-input-password").value.trim();
+    const role = document.getElementById("agent-input-role").value;
+
+    try {
+      const res = await fetch("/api/v1/auth/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ display_name, username, password, role })
+      });
+      if (res.ok) {
+        closeModal("modal-add-agent");
+        document.getElementById("form-create-agent").reset();
+        showToast("کارشناس جدید ایجاد شد.", "success");
+        loadTeamList();
+        loadAgents();
+      } else {
+        const err = await res.json();
+        showToast("خطا: " + (err.detail || "عدم دسترسی"), "error");
+      }
+    } catch (err) {
+      showToast("خطا در ایجاد کاربر: " + err.message, "error");
+    }
+  });
+}
+
+async function loadTeamList() {
+  const tbody = document.getElementById("team-table-body");
+  const token = localStorage.getItem("omni_token") || localStorage.getItem("token");
+
   try {
-    await navigator.clipboard.writeText(text);
-    showToast("کد با موفقیت کپی شد!", "success");
+    const res = await fetch("/api/v1/auth/users", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (!res.ok) return;
+    const users = await res.json();
+
+    tbody.innerHTML = users.map(u => `
+      <tr style="border-bottom: 1px solid var(--border);">
+        <td style="padding: 12px 10px; font-weight: 700;">${escapeHtml(u.display_name)}</td>
+        <td style="padding: 12px 10px; font-family: monospace;">${escapeHtml(u.username)}</td>
+        <td style="padding: 12px 10px; color: var(--text-muted);">${escapeHtml(u.email || '-')}</td>
+        <td style="padding: 12px 10px;">
+          <span class="status-pill ${u.role === 'admin' ? 'resolved' : 'open'}">
+            ${u.role === 'admin' ? 'مدیر سیستم' : 'کارشناس پشتیبانی'}
+          </span>
+        </td>
+        <td style="padding: 12px 10px;">
+          <span style="color: ${u.is_active ? 'var(--success)' : 'var(--danger)'};">● ${u.is_active ? 'فعال' : 'غیرفعال'}</span>
+        </td>
+      </tr>
+    `).join("");
   } catch (err) {
-    showToast("خطا در کپی کردن متن.", "error");
+    console.warn("Load team error:", err);
   }
+}
+
+// --- Helpers & Modals ---
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add("open");
+}
+
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.remove("open");
+}
+
+document.querySelectorAll("[data-close]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    closeModal(btn.getAttribute("data-close"));
+  });
+});
+
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
+}
+
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }

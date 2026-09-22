@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پورتال پیگیری تیکت‌های مشتریان | OmniSupport Helpdesk</title>
+  <link rel="stylesheet" href="/frontend/css/style.css">
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .portal-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .portal-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .portal-container {
+      max-width: 860px;
+      width: 100%;
+      margin: 36px auto;
+      padding: 0 16px;
+      flex: 1;
+    }
+    .track-search-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
+    }
+    .ticket-view-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      display: none;
+    }
+    .ticket-view-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #fafafa;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .ticket-messages-pane {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 500px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="portal-header">
+    <div class="portal-logo">
+      <span>🎫</span>
+      <span>سامانه پیگیری تیکت‌های پشتیبانی</span>
+    </div>
+    <div style="font-size: 13px; color: #64748b;">
+      پاسخگویی هوشمند ۲۴ ساعته
+    </div>
+  </header>
+
+  <main class="portal-container">
+    <!-- Ticket Lookup Card -->
+    <div class="track-search-card">
+      <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">پیگیری وضعیت تیکت با شماره پیگیری</h2>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">شماره پیگیری تیکت خود را (مثلاً <code>HD-1001</code>) وارد کنید تا تاریخچه و پاسخ‌های کارشناس را مشاهده نمایید:</p>
+      
+      <div style="display: flex; gap: 10px;">
+        <input type="text" class="form-input" id="portal-ticket-code" placeholder="مثال: HD-1001" style="flex: 1; font-weight: 700; text-transform: uppercase;">
+        <button class="btn-primary" id="btn-track-ticket" style="padding: 10px 24px;">جستجو و مشاهده تیکت</button>
+      </div>
+      <div id="portal-error" style="color: #ef4444; font-size: 12.5px; margin-top: 8px; display: none;"></div>
+    </div>
+
+    <!-- Active Ticket View Card -->
+    <div class="ticket-view-card" id="ticket-view-card">
+      <div class="ticket-view-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700; font-family: monospace;" id="p-ticket-num">HD-1001</span>
+            <span class="status-pill active" id="p-ticket-status">در حال بررسی</span>
+          </div>
+          <h3 style="font-size: 16px; font-weight: 800;" id="p-ticket-subject">موضوع تیکت</h3>
+          <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+            <span>کارشناس پاسخگو: <strong id="p-ticket-agent">-</strong></span>
+            <span style="margin: 0 6px;">•</span>
+            <span>تاریخ ثبت: <span id="p-ticket-date">-</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages Thread -->
+      <div class="ticket-messages-pane" id="portal-messages-feed">
+        <!-- Messages rendered via JS -->
+      </div>
+
+      <!-- Customer Reply Box -->
+      <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; background: #ffffff;">
+        <form id="portal-reply-form" style="display: flex; flex-direction: column; gap: 10px;">
+          <textarea class="form-textarea rtl" id="portal-reply-text" rows="3" placeholder="ارسال پاسخ جدید به کارشناس پشتیبانی..."></textarea>
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn-primary" id="btn-send-portal-reply">ارسال پاسخ</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentTicketId = null;
+
+    document.getElementById("btn-track-ticket").addEventListener("click", trackTicket);
+    document.getElementById("portal-ticket-code").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") trackTicket();
+    });
+
+    async function trackTicket() {
+      const code = document.getElementById("portal-ticket-code").value.trim();
+      const errBox = document.getElementById("portal-error");
+      const card = document.getElementById("ticket-view-card");
+
+      errBox.style.display = "none";
+      if (!code) return;
+
+      try {
+        const res = await fetch(`/api/v1/portal/tickets/${encodeURIComponent(code)}`);
+        if (!res.ok) {
+          errBox.textContent = "تیکتی با این شماره پیگیری یافت نشد. لطفاً شماره را بررسی فرمایید.";
+          errBox.style.display = "block";
+          card.style.display = "none";
+          return;
+        }
+
+        const data = await res.json();
+        currentTicketId = data.ticket_number;
+
+        document.getElementById("p-ticket-num").textContent = data.ticket_number;
+        document.getElementById("p-ticket-subject").textContent = data.subject;
+        document.getElementById("p-ticket-status").textContent = 
+          data.status === "open" ? "باز (در صف)" : 
+          data.status === "in_progress" ? "در حال پیگیری" : 
+          data.status === "resolved" ? "حل‌شده" : data.status;
+
+        document.getElementById("p-ticket-agent").textContent = data.assigned_agent;
+        document.getElementById("p-ticket-date").textContent = new Date(data.created_at).toLocaleDateString("fa-IR");
+
+        // Render messages
+        const feed = document.getElementById("portal-messages-feed");
+        feed.innerHTML = data.messages.map(m => {
+          const isCustomer = m.sender_type === "customer";
+          const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          return `
+            <div style="display: flex; flex-direction: column; align-self: ${isCustomer ? 'flex-start' : 'flex-end'}; max-width: 80%;">
+              <div style="background: ${isCustomer ? '#4f46e5' : '#ffffff'}; color: ${isCustomer ? '#fff' : '#1e293b'}; border: 1px solid ${isCustomer ? 'transparent' : '#e2e8f0'}; border-radius: 12px; padding: 12px 16px; font-size: 13.5px; line-height: 1.6; word-break: break-word;">
+                ${m.content}
+              </div>
+              <span style="font-size: 11px; color: #94a3b8; margin-top: 4px; padding: 0 4px; text-align: ${isCustomer ? 'right' : 'left'};">
+                ${m.sender_name} • ${time}
+              </span>
+            </div>
+          `;
+        }).join("");
+
+        card.style.display = "block";
+        feed.scrollTop = feed.scrollHeight;
+
+      } catch (err) {
+        errBox.textContent = "خطای ارتباط با سرور: " + err.message;
+        errBox.style.display = "block";
+      }
+    }
+
+    document.getElementById("portal-reply-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = document.getElementById("portal-reply-text").value.trim();
+      if (!text || !currentTicketId) return;
+
+      document.getElementById("btn-send-portal-reply").disabled = true;
+
+      try {
+        const res = await fetch(`/api/v1/portal/tickets/${currentTicketId}/reply`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: text })
+        });
+
+        if (res.ok) {
+          document.getElementById("portal-reply-text").value = "";
+          trackTicket(); // refresh feed
+        }
+      } catch (err) {
+        alert("خطا در ارسال: " + err.message);
+      } finally {
+        document.getElementById("btn-send-portal-reply").disabled = false;
+      }
+    });
+
+    // Check URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeParam = urlParams.get("ticket");
+    if (codeParam) {
+      document.getElementById("portal-ticket-code").value = codeParam;
+      trackTicket();
+    }
+  </script>
+</body>
+</html>

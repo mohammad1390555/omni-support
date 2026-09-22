@@ -76,7 +76,11 @@
             <h3 id="omni-title">پشتیبانی آنلاین</h3>
             <div class="omni-header-status">
               <span class="omni-status-dot"></span>
-              <span>پاسخگویی سریع با هوش مصنوعی و اپراتور</span>
+              <span id="omni-status-text">پاسخگویی سریع با هوش مصنوعی و کارشناس</span>
+            </div>
+            <div id="omni-ticket-badge" style="display: none; font-size: 11px; margin-top: 2px; color: #e0e7ff;">
+              <span>شماره تیکت شما: <strong id="omni-ticket-num" style="background: rgba(255,255,255,0.2); padding: 1px 5px; border-radius: 4px;">HD-1001</strong></span>
+              <a href="/portal" target="_blank" style="color: #fff; text-decoration: underline; margin-right: 6px;">پیگیری در پورتال ↗</a>
             </div>
           </div>
         </div>
@@ -194,6 +198,16 @@
         conversationId = data.id;
         localStorage.setItem("omni_conv_id_" + siteId, conversationId);
         
+        // Show ticket badge
+        if (data.ticket_number) {
+          const badge = document.getElementById("omni-ticket-badge");
+          const numEl = document.getElementById("omni-ticket-num");
+          if (badge && numEl) {
+            numEl.textContent = data.ticket_number;
+            badge.style.display = "block";
+          }
+        }
+
         // Render existing messages
         messagesBox.innerHTML = "";
         messagesBox.appendChild(typingIndicator);

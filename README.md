@@ -1,155 +1,152 @@
-# ⚡ OmniSupport AI | سامانه جامع پشتیبانی هوشمند و چندکاناله با تصمیم‌گیری ایمن (TypeSafe AI)
-
-<div align="center">
-
-![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![WebSockets](https://img.shields.io/badge/Realtime-WebSockets-green?style=for-the-badge)
-![OpenAI Compatible](https://img.shields.io/badge/AI-OpenAI%20%7C%20DeepSeek%20%7C%20Groq%20%7C%20Ollama-orange?style=for-the-badge)
-![RBAC](https://img.shields.io/badge/Auth-RBAC%20Admin%20%26%20Member-purple?style=for-the-badge)
-
-<p align="center">
-  <b>یک پلتفرم سازمانی و استاندارد پشتیبانی مشتریان مجهز به اینستالر گرافیکی تحت وب (بدون نیاز به نوشتن کد)، تفکیک کامل نقش‌های مدیر (Admin) و اپراتور (Agent Member)، موتور تصمیم‌گیری ایمن TypeSafe AI و یادگیری پویا از پاسخ‌های پشتیبان‌ها.</b>
-</p>
-
-[نصب گرافیکی بدون کد](#-نصب-آسان-و-گرافیکی-تحت-وب-no-code-installer) • [پیش‌نمایش تصویری](#-پیش‌نمایش-تصویری-سیستم-screenshots) • [نقش‌های کاربری](#-سطوح-دسترسی-و-تفکیک-نقش‌ها-rbac) • [راه‌اندازی با داکر](#-راه‌اندازی-گام‌به‌گام-با-داکر-docker) • [اتصال ویجت](#-نحوه-اتصال-ویجت-به-وب‌سایت‌ها)
-
-</div>
+# ⚡ OmniSupport Enterprise Helpdesk & TypeSafe AI Platform
+> **پلتفرم هلپ‌دسک و سامانه مدیریت تیکتینگ هوشمند سازمانی الهام‌گرفته از Frappe Helpdesk و Linear**  
+> مجهز به موتور تصمیم‌گیری ساختاریافته **TypeSafe AI Decision Engine**، یادگیری مداوم از کارشناسان، پورتال پیگیری مشتریان، ویجت گفتگوی زنده، ویزارد نصب بدون کد و پشتیبانی کامل از داکر (Docker).
 
 ---
 
-## 📸 پیش‌نمایش تصویری سیستم (Screenshots)
+## 📸 گالری تصاویر و نمای بخش‌های مختلف سامانه (Screenshots)
 
-### ۱. ویزارد نصب گرافیکی و هوشمند (Web Setup Wizard & Onboarding)
-کاربر برای نصب نیازی به هیچ دستوری ندارد؛ اینستالر تحت وب پیش‌نیازها را بررسی کرده، سوالات Onboarding را می‌پرسد و سیستم را در چند ثانیه راه‌اندازی می‌کند:
+### ۱. میزکار هلپ‌دسک سازمانی (Frappe & Linear 3-Pane Workspace)
+نمای ۳ ستونه پیشرفته شامل صندوق فیلتر تیکت‌ها (همه، تیکت‌های من، بدون مسئول، بحرانی، حل‌شده)، تاریخچه گفتگو با تفکیک **پاسخ عمومی (Public Reply)** و **یادداشت محرمانه کارشناسان (Private Internal Note)**، نوار پاسخ‌های آماده، تحلیل احساس مشتری و موتور TypeSafe AI:
+![OmniSupport Helpdesk Workspace](docs/screenshots/03-helpdesk-workspace.png)
 
+---
+
+### ۲. پورتال اختصاصی پیگیری تیکت‌های مشتریان (Customer Tracking Portal)
+صفحه عمومی پیگیری تیکت برای مشتریان با شناسه رهگیری (مانند `HD-1001`)، مشاهده وضعیت زنده، نام کارشناس پاسخگو و امکان ارسال مستقیم پاسخ (با پنهان‌سازی خودکار و امن یادداشت‌های داخلی):
+![Customer Portal](docs/screenshots/04-customer-portal.png)
+
+---
+
+### ۳. داشبورد نظارتی آمار، عملکرد و تعهدات پاسخ‌گویی (Analytics & SLA)
+شاخص‌های کلیدی عملکرد (KPIs)، نرخ پاسخگویی خودکار هوش مصنوعی، رعایت مهلت SLA، میانگین زمان تاخیر (Latency) و نمودار تصمیمات چهارگانه موتور TypeSafe AI:
+![Analytics & SLA Dashboard](docs/screenshots/05-analytics-sla-dashboard.png)
+
+---
+
+### ۴. ویزارد گرافیکی و راه‌اندازی اولیه بدون ترمینال (Web Installer Wizard)
+راه‌اندازی صفر تا صد سامانه بدون نیاز به دستورات متنی؛ تنها در ۵ گام تعاملی با تست اتصال هوش مصنوعی و تزریق پرامپت‌های تخصصی:
 ![Web Installer Wizard](docs/screenshots/01-web-installer-wizard.png)
 
 ---
 
-### ۲. صفحه ورود امن و تفکیک سطوح دسترسی (Modern Login & Roles)
-ورود با پسورد هش‌شده امن (PBKDF2-SHA256)، توکن امضاشده و دکمه‌های ورود آزمایشی سریع:
-
+### ۵. صفحه امن ورود و تفکیک نقش‌های کاربری (Role-Based Authentication)
+ورود امن با هش‌گذاری استاندارد PBKDF2 و تفکیک دسترسی مدیر ارشد (Admin) و اعضای تیم پشتیبانی (Agent Member):
 ![Modern Login Screen](docs/screenshots/02-modern-login-screen.png)
 
 ---
 
-### ۳. میزکار چت زنده و بازرس هوشمند تصمیم‌گیری (Live Chat & TypeSafe Inspector)
-پاسخگویی به کاربران در لحظه از طریق وب‌سوکت، استفاده از پاسخ‌های آماده، و مشاهده زنده قطعیت، نیت و تحلیل گزینه‌های هوش مصنوعی:
-
-![Live Chat Workspace](docs/screenshots/03-live-chat-workspace.png)
-
----
-
-### ۴. داشبورد آمار، عملکرد و بازدهی هوش مصنوعی (Analytics & KPI)
-محاسبه درصد تیکت‌های حل‌شده توسط AI در برابر اپراتورهای انسانی، میانگین زمان پاسخگویی و نمودار تفکیک تصمیمات:
-
-![Analytics Dashboard](docs/screenshots/04-analytics-dashboard.png)
+### ۶. مدیریت اعضای تیم و سطوح دسترسی (Team & Roles Management)
+تعریف و مدیریت اعضای تیم پشتیبانی، تغییر سطوح دسترسی و وضعیت فعال/غیرفعال بودن کارشناسان:
+![Team Management](docs/screenshots/07-team-roles-management.png)
 
 ---
 
-### ۵. مدیریت اپراتورها و اعضای تیم (Team & Member Roles)
-امکان افزودن کارشناسان جدید، تعیین نقش (مدیر سیستم vs اپراتور پشتیبان) و مدیریت وضعیت آنلاین:
-
-![Team Roles Management](docs/screenshots/05-team-roles-management.png)
-
----
-
-### ۶. دموی وب‌سایت مشتری و ویجت اختصاصی (Live Customer Widget Demo)
-شبیه‌ساز فروشگاه مشتری با ویجت فعال و اتصال خودکار بلادرنگ:
-
-![Customer Widget Live Demo](docs/screenshots/06-customer-widget-live.png)
+### ۷. الگوها و میانبرهای پاسخ سریع (Canned Responses)
+تعریف و مدیریت قالب‌های متنی پرکاربرد با شورت‌کدهای اختصاصی (مانند `/hello`، `/order`، `/tech`، `/bye`):
+![Canned Responses](docs/screenshots/08-canned-responses-templates.png)
 
 ---
 
-## 🛠️ نصب آسان و گرافیکی تحت وب (No-Code Installer)
-
-یکی از مهم‌ترین استانداردهای پنل‌های بین‌المللی این است که **مدیر یا کاربر نهایی نباید هیچ دستوری در ترمینال بزند!**
-
-1. به آدرس `http://localhost:8000/install` بروید.
-2. ویزارد ۵ مرحله‌ای را طی کنید:
-   * **مرحله ۱:** بررسی سلامت خودکار سیستم (FastAPI، SQLite و WebSockets).
-   * **مرحله ۲:** سوالات Onboarding (نام برند، حوزه فعالیت: فروشگاهی/SaaS/خدماتی، و لحن هوش مصنوعی: صمیمی/رسمی/تخصصی).
-   * **مرحله ۳:** ساخت نام کاربری و رمز عبور مدیر ارشد.
-   * **مرحله ۴:** انتخاب ارائه‌دهنده هوش مصنوعی (OpenAI, DeepSeek, Groq, Ollama) یا شروع با موتور محلی.
-   * **مرحله ۵:** پایان نصب و ورود آنی به داشبورد ادمین!
+### ۸. ویجت گفتگوی زنده متصل به سایت (Live Customer Widget)
+ویجت بسیار سبک، سریع و مدرن قابل تعبیه در هر وب‌سایت با پشتیبانی از وب‌سوکت دوطرفه و نمایش کد پیگیری تیکت به مشتری:
+![Live Customer Widget](docs/screenshots/06-customer-widget-live.png)
 
 ---
 
-## 👥 سطوح دسترسی و تفکیک نقش‌ها (RBAC)
+## 🌟 قابلیت‌های برجسته سامانه (Key Features)
 
-سیستم به صورت استاندارد دارای دو نقش تفکیک‌شده است:
+### 1. معماری هلپ‌دسک در کلاس سازمانی (Enterprise Helpdesk Architecture)
+- **کدگذاری متوالی تیکت‌ها:** شماره‌گذاری دقیق و استاندارد تیکت‌ها مانند `HD-1001`، `HD-1002` و...
+- **سطوح اولویت چهارگانه:** بحرانی (`Urgent 🔥`)، بالا (`High`)، متوسط (`Medium`)، کم (`Low`).
+- **وضعیت‌های استاندارد چرخه حیات تیکت:** باز (`Open`)، در حال بررسی (`In Progress`)، در انتظار پاسخ مشتری (`Pending Customer`)، حل‌شده (`Resolved`) و بسته (`Closed`).
+- **ارجاع هوشمند به کارشناسان:** امکان واگذاری تیکت به کارشناس خاص یا قرارگیری در صف عمومی.
+- **تعهدات پاسخ‌گویی (SLA Tracking):** محاسبه و هشدار مهلت زمانی پاسخ بر اساس اولویت تیکت (مثلاً ۲ ساعت برای تیکت‌های بحرانی).
+- **یادداشت‌های محرمانه داخلی (Internal Notes):** ثبت تحلیل‌ها و گزارشات درون‌تیمی با برچسب زرد و علامت قفل که هرگز برای کاربر در وب‌سایت یا پورتال نمایش داده نمی‌شود.
+- **لاگ تاریخچه و فعالیت‌ها (Activity Timeline Audit):** ثبت تمامی رویدادها شامل تغییر وضعیت، تغییر اولویت، ارجاع تیکت و یادگیری مدل.
 
-### 👑 ۱. مدیر ارشد سیستم (Super Admin)
-* دسترسی کامل به تنظیمات حساس سرور، Base URL و کلیدهای API.
-* مدیریت اعضای تیم، افزودن اپراتورهای جدید و تغییر نقش‌ها.
-* مشاهده گزارشات تحلیلی، KPI، و شخصی‌سازی ظاهر و رنگ ویجت.
+### 2. پورتال عمومی پیگیری تیکت مشتریان (Customer Tracking Portal)
+- مسیر اختصاصی `/portal` و `/portal?ticket=HD-1001` برای مشتریان بدون نیاز به احراز هویت پیچیده.
+- مشاهده پیشرفت تیکت، پیام‌های کارشناس و سیستم.
+- امکان ارسال پاسخ متقابل مستقیم از مرورگر کاربر.
 
-### 🎧 ۲. اپراتور / عضو پشتیبانی (Agent Member)
-* میزکار اختصاصی چت بلادرنگ بدون شلوغی و پیچیدگی.
-* پاسخگویی سریع به پیام‌های مشتریان با کلیدهای میانبر و پاسخ‌های آماده.
-* دکمه **«🎓 آموزش به هوش مصنوعی»** جهت ثبت پاسخ‌های جدید در حافظه سیستم.
-* **امنیت کامل:** تب‌های حساس تنظیمات سرور و کلیدهای API برای اپراتورها مخفی و قفل است.
+### 3. موتور هوشمند TypeSafe AI Decision Engine
+پیش از هرگونه پاسخ‌گویی به مشتری، هوش مصنوعی پرسش را تحلیل کرده و ابتدا از میان ۴ گزینه ساختاریافته تصمیم‌گیری می‌کند:
+1. **`AUTO_ANSWER`**: ضریب اطمینان بالا بر اساس پایگاه دانش (RAG) $\rightarrow$ پاسخگویی خودکار آنی.
+2. **`SUGGEST_TO_AGENT`**: پاسخ احتمالی تهیه و به عنوان Co-pilot تنها به کارشناس پیشنهاد می‌شود.
+3. **`TRANSFER_TO_HUMAN`**: در موارد پیچیده، نارضایتی، خشم مشتری یا درخواست مستقیم انتقال به انسان $\rightarrow$ اولویت به `Urgent` تغییر کرده و تیکت به صف انسانی منتقل می‌شود.
+4. **`CLARIFY`**: اطلاعات کاربر مبهم یا ناقص است $\rightarrow$ درخواست توضیحات تکمیلی.
+
+### 4. یادگیری مداوم از کارشناسان (Agent Learning Loop)
+هر زمان که یک کارشناس انسانی به سوالی پاسخ دهد، با یک کلیک روی **"ذخیره در حافظه هوش مصنوعی"**، جفت پرسش و پاسخ تحلیل شده، کلیدواژه‌ها استخراج شده و به عنوان یک دانش تایید شده در دیتابیس ذخیره می‌شود تا در دفعات بعدی هوش مصنوعی بتواند سوالات مشابه را خودکار پاسخ دهد.
+
+### 5. سازگاری با هر ارائه‌دهنده LLM با لینک و کلید دلخواه
+- قابلیت تنظیم دلخواه **Base URL (Base Link)**، **API Key**، و **Model Name**.
+- پریست‌های آماده برای **OpenAI**، **OpenRouter**، **Groq** و مدل‌های محلی **Ollama** (`http://localhost:11434/v1`).
+- امکان شخصی‌سازی کامل پرامپت سیستمی و آستانه ضریب اطمینان (Threshold).
 
 ---
 
-## 🚀 راه‌اندازی سریع با داکر (Docker Compose)
+## 🚀 راهنمای سریع راه‌اندازی (Quick Start)
 
+### روش اول: راه‌اندازی سریع با داکر (Docker & Docker Compose)
 ```bash
-# دریافت مخزن
+# ۱. دریافت پروژه
 git clone https://github.com/mohammad1390555/omni-support.git
 cd omni-support
 
-# اجرا با یک دستور
-docker compose up -d --build
+# ۲. اجرای کانتینر با داکر کامپوز
+docker-compose up -d --build
 ```
-
-آدرس‌های در دسترس:
-* **پنل مدیریت پشتیبانی:** `http://localhost:8000`
-* **ورود به سیستم:** `http://localhost:8000/login`
-* **نصب گرافیکی مجدد:** `http://localhost:8000/install`
-* **دموی سایت مشتری:** `http://localhost:8000/widget-demo`
-
-> **نام کاربری و رمز عبور پیش‌فرض تست:**  
-> * مدیر (Admin): `admin` / `admin123`  
-> * پشتیبان (Agent): `agent1` / `agent123`
+سپس مرورگر خود را باز کرده و به آدرس زیر بروید:
+- **ویزارد راه‌اندازی گرافیکی:** `http://localhost:8000/install`
+- **ورود به پنل:** `http://localhost:8000/login`
+- **پورتال مشتریان:** `http://localhost:8000/portal`
 
 ---
 
-## 🧩 نحوه اتصال ویجت به وب‌سایت‌ها
+### روش دوم: راه‌اندازی با پایتون (Python Native)
+```bash
+# پیش‌نیاز: پایتون 3.10 به بالا
+cd omni-support/backend
 
-کد زیر را قبل از بسته شدن تگ `</body>` در قالب هر سایتی بگذارید:
+# ساخت و فعال‌سازی محیط مجازی
+python3 -m venv venv
+source venv/bin/activate  # در ویندوز: venv\Scripts\activate
+
+# نصب وابستگی‌ها
+pip install -r requirements.txt
+
+# اجرای سرور
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+---
+
+## 🔑 اطلاعات ورود پیش‌فرض (Default Credentials)
+
+| نقش کاربری | نام کاربری | رمز عبور | سطح دسترسی |
+|:---|:---|:---|:---|
+| **مدیر ارشد (Admin)** | `admin` | `admin123` | دسترسی کامل به تمامی بخش‌ها، تنظیمات هوش مصنوعی، مدیریت کارشناسان و آمار |
+| **کارشناس فنی (Agent)** | `agent1` | `agent123` | دسترسی به میزکار تیکت‌ها، پاسخ‌گویی، ثبت یادداشت محرمانه و یادگیری هوش مصنوعی |
+
+---
+
+## 🔌 نحوه اتصال ویجت به وب‌سایت‌ها (Integration Guide)
+
+کافی است تگ زیر را قبل از بسته شدن تگ `</body>` در قالب وب‌سایت یا سیستم مدیریت محتوای خود (مانند وردپرس) قرار دهید:
 
 ```html
-<!-- OmniSupport AI Live Chat Widget -->
+<!-- OmniSupport Live Chat & Ticketing Widget -->
 <script 
-  src="http://YOUR-DOMAIN:8000/static/widget.js" 
+  src="http://YOUR-SERVER-IP:8000/static/widget.js" 
   data-site-id="site_default" 
-  data-api-url="http://YOUR-DOMAIN:8000" 
-  async>
+  data-api-base="http://YOUR-SERVER-IP:8000" 
+  defer>
 </script>
 ```
 
 ---
 
-## ⚡ مستندات کامل REST API
-
-ارسال مستقیم تیکت از بک‌اند وب‌سایت‌ها:
-
-```bash
-curl -X POST "http://YOUR-DOMAIN:8000/api/v1/external/tickets" \
-  -H "Content-Type: application/json" \
-  -H "X-Site-Key: omni_live_k8s92f8a129d38c71e041" \
-  -d '{
-    "site_id": "site_default",
-    "customer_id": "user_491",
-    "customer_name": "سارا کریمی",
-    "message": "سلام، فاکتور خرید من صادر نشده است."
-  }'
-```
-
----
-
-## 👨‍💻 توسعه‌دهنده
-ساخته‌شده با ❤️ توسط [mohammad1390555](https://github.com/mohammad1390555)
+## 📄 لایسنس
+توسعه یافته تحت مجوز MIT License. استفاده تجاری و سازمانی کاملاً آزاد است.
