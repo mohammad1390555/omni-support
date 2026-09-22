@@ -4,28 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>نصب و راه‌اندازی هوشمند OmniSupport AI (Setup Wizard)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/frontend/css/style.css">
   <style>
     body {
-      background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 100%);
-      color: #f8fafc;
+      background: radial-gradient(circle at 80% 20%, #0F172A 0%, #0B1120 100%);
+      color: #F8FAFC;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 30px 15px;
       overflow-y: auto;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0, 82, 255, 0.22) 0%, transparent 70%);
+      pointer-events: none;
     }
     .wizard-card {
-      background: rgba(30, 41, 59, 0.85);
+      background: rgba(15, 23, 42, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(16px);
-      border-radius: 24px;
-      width: 820px;
+      backdrop-filter: blur(20px);
+      border-radius: var(--radius-xl);
+      width: 840px;
       max-width: 100%;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 82, 255, 0.15);
       padding: 40px;
       position: relative;
+      z-index: 10;
     }
     .wizard-header {
       text-align: center;
@@ -34,24 +49,25 @@
     .wizard-logo {
       width: 56px;
       height: 56px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      border-radius: 18px;
+      background: var(--accent-gradient);
+      border-radius: var(--radius-lg);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 28px;
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
+      box-shadow: var(--shadow-accent);
       margin-bottom: 14px;
     }
     .wizard-header h1 {
+      font-family: var(--font-display);
       font-size: 24px;
-      font-weight: 800;
-      color: #ffffff;
+      font-weight: 700;
+      color: #FFFFFF;
       margin-bottom: 6px;
     }
     .wizard-header p {
       font-size: 13.5px;
-      color: #94a3b8;
+      color: #94A3B8;
     }
 
     /* Stepper Progress Bar */
@@ -84,34 +100,35 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: #1e293b;
+      background: #1E293B;
       border: 2px solid #475569;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 14px;
+      font-family: var(--font-mono);
       font-weight: 700;
-      color: #94a3b8;
+      color: #94A3B8;
       transition: all 0.3s;
     }
     .step-item.active .step-circle {
-      background: var(--primary);
-      border-color: #818cf8;
-      color: #ffffff;
-      box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+      background: var(--accent);
+      border-color: #60A5FA;
+      color: #FFFFFF;
+      box-shadow: var(--shadow-accent);
     }
     .step-item.completed .step-circle {
-      background: #10b981;
-      border-color: #34d399;
-      color: #ffffff;
+      background: #10B981;
+      border-color: #34D399;
+      color: #FFFFFF;
     }
     .step-label {
       font-size: 12px;
       font-weight: 600;
-      color: #94a3b8;
+      color: #94A3B8;
     }
     .step-item.active .step-label {
-      color: #f8fafc;
+      color: #F8FAFC;
     }
 
     /* Wizard Content Sections */
@@ -128,22 +145,22 @@
     }
 
     .glass-input {
-      background: rgba(15, 23, 42, 0.6) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      color: #ffffff !important;
-      border-radius: 10px !important;
-      padding: 12px 14px !important;
+      background: rgba(11, 17, 32, 0.7) !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      color: #FFFFFF !important;
+      border-radius: var(--radius-md) !important;
+      padding: 12px 16px !important;
       width: 100%;
     }
     .glass-input:focus {
-      border-color: #818cf8 !important;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.25) !important;
     }
 
     .check-box-item {
-      background: rgba(15, 23, 42, 0.5);
+      background: rgba(11, 17, 32, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       padding: 14px 18px;
       display: flex;
       align-items: center;
@@ -158,20 +175,21 @@
       margin-top: 10px;
     }
     .radio-card {
-      background: rgba(15, 23, 42, 0.5);
+      background: rgba(11, 17, 32, 0.5);
       border: 1.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       padding: 16px;
       cursor: pointer;
       transition: all 0.2s;
     }
     .radio-card:hover {
-      border-color: #818cf8;
-      background: rgba(99, 102, 241, 0.1);
+      border-color: #60A5FA;
+      background: rgba(0, 82, 255, 0.1);
     }
     .radio-card.selected {
-      border-color: var(--primary);
-      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--accent);
+      background: rgba(0, 82, 255, 0.2);
+      box-shadow: var(--shadow-accent);
     }
     .radio-card h4 {
       font-size: 14px;
@@ -180,7 +198,7 @@
     }
     .radio-card p {
       font-size: 11.5px;
-      color: #94a3b8;
+      color: #94A3B8;
       line-height: 1.4;
     }
 

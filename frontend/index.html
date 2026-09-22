@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OmniSupport | هلپ‌دسک و سامانه تیکتینگ هوشمند سازمانی</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/frontend/css/style.css">
 </head>
 <body>
@@ -310,66 +313,86 @@
            ============================================== -->
       <section class="content-tab" id="tab-analytics">
         <div class="docs-view">
-          <div class="page-header">
-            <h2>داشبورد آماری و شاخص‌های هلپ‌دسک (Analytics & SLA)</h2>
-            <p>نظارت زنده بر عملکرد تیم پشتیبانی، انطباق با تعهدات پاسخ‌گویی و دقت مدل هوش مصنوعی</p>
+          
+          <!-- Inverted Contrast Hero Section (Design System DNA) -->
+          <div class="analytics-hero-card">
+            <div class="section-badge" style="background: rgba(0, 82, 255, 0.2); border-color: rgba(0, 82, 255, 0.5); color: #60A5FA;">
+              <span class="pulsing-dot" style="background-color: #60A5FA; box-shadow: 0 0 10px #60A5FA;"></span>
+              <span>LIVE METRICS & SLA INTELLIGENCE</span>
+            </div>
+            <h2 style="font-family: var(--font-display); font-size: 28px; margin-top: 10px; color: #FFFFFF;">
+              داشبورد نظارت و عملکرد <span class="gradient-text">OmniSupport</span>
+            </h2>
+            <p style="font-size: 13.5px; color: #94A3B8; margin-top: 6px; max-width: 640px; line-height: 1.6;">
+              پایش بلادرنگ تعهدات پاسخ‌گویی (SLA)، نرخ تفکیک خودکار هوش مصنوعی، و توزیع تصمیمات چهارگانه موتور TypeSafe
+            </p>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
-            <div class="settings-card" style="margin-bottom: 0; padding: 18px;">
-              <span style="font-size: 12px; color: var(--text-muted);">کل تیکت‌های پشتیبانی</span>
-              <h3 style="font-size: 26px; font-weight: 800; color: var(--primary); margin-top: 6px;" id="stat-total-convs">0</h3>
+          <!-- Top 4 KPIs -->
+          <div class="stat-grid-4">
+            <div class="metric-card">
+              <span class="metric-card-label">کل تیکت‌های پشتیبانی</span>
+              <div class="metric-card-val" style="color: var(--accent);" id="stat-total-convs">0</div>
+              <span style="font-size: 11px; color: var(--muted-foreground);">ثبت شده در سیستم</span>
             </div>
 
-            <div class="settings-card" style="margin-bottom: 0; padding: 18px;">
-              <span style="font-size: 12px; color: var(--text-muted);">تیکت‌های در صف و باز</span>
-              <h3 style="font-size: 26px; font-weight: 800; color: #f59e0b; margin-top: 6px;" id="stat-open-tickets">0</h3>
+            <div class="metric-card">
+              <span class="metric-card-label">تیکت‌های در صف و فعال</span>
+              <div class="metric-card-val" style="color: var(--warning);" id="stat-open-tickets">0</div>
+              <span style="font-size: 11px; color: var(--muted-foreground);">نیازمند پاسخگویی</span>
             </div>
 
-            <div class="settings-card" style="margin-bottom: 0; padding: 18px;">
-              <span style="font-size: 12px; color: var(--text-muted);">نرخ پاسخگویی خودکار هوش مصنوعی</span>
-              <h3 style="font-size: 26px; font-weight: 800; color: var(--success); margin-top: 6px;" id="stat-ai-resolved">0%</h3>
+            <div class="metric-card">
+              <span class="metric-card-label">نرخ پاسخگویی هوش مصنوعی</span>
+              <div class="metric-card-val" style="color: var(--success);" id="stat-ai-resolved">0%</div>
+              <span style="font-size: 11px; color: var(--muted-foreground);">بدون نیاز به نیروی انسانی</span>
             </div>
 
-            <div class="settings-card" style="margin-bottom: 0; padding: 18px;">
-              <span style="font-size: 12px; color: var(--text-muted);">میانگین تاخیر پاسخگویی (Latency)</span>
-              <h3 style="font-size: 26px; font-weight: 800; color: #06b6d4; margin-top: 6px;" id="stat-avg-latency">0 ms</h3>
+            <div class="metric-card">
+              <span class="metric-card-label">میانگین تاخیر (Latency)</span>
+              <div class="metric-card-val" style="color: var(--info);" id="stat-avg-latency">0 ms</div>
+              <span style="font-size: 11px; color: var(--muted-foreground);">پاسخگویی فوق‌سریع</span>
             </div>
           </div>
 
-          <!-- TypeSafe Decision Engine Stats -->
+          <!-- TypeSafe AI Decision Breakdown Card -->
           <div class="settings-card">
+            <div class="section-badge">
+              <span class="pulsing-dot"></span>
+              <span>STRUCTURED DECISION CYCLE</span>
+            </div>
             <h3 class="card-title">تحلیل آماری تصمیم‌گیری TypeSafe AI Engine</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-              هوش مصنوعی پیش از هرگونه پاسخ، به صورت ساختاریافته تصمیم می‌گیرد آیا مستقیماً پاسخ دهد، پیش‌نویس آماده کند، یا تیکت را به کارشناس ارجاع دهد:
+            <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; line-height: 1.6;">
+              هوش مصنوعی پیش از هر پاسخ ابتدا گزینه‌های ساختاریافته را با ضریب اطمینان سنجیده و تصمیم بهینه را اتخاذ می‌کند:
             </p>
 
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-              <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 16px; text-align: center;">
-                <span style="font-size: 12px; color: #166534; font-weight: 700;">AUTO_ANSWER</span>
-                <div style="font-size: 22px; font-weight: 800; color: #15803d; margin-top: 6px;" id="stat-action-auto">0</div>
-                <span style="font-size: 11px; color: #166534;">پاسخ خودکار بدون دخالت انسان</span>
+            <div class="decision-grid-4">
+              <div class="decision-card featured">
+                <span class="decision-card-title" style="color: #16A34A;">AUTO_ANSWER</span>
+                <div class="decision-card-val" style="color: #15803D;" id="stat-action-auto">0</div>
+                <span style="font-size: 11.5px; color: #166534; font-weight: 500;">پاسخ آنی خودکار</span>
               </div>
 
-              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; text-align: center;">
-                <span style="font-size: 12px; color: #1e40af; font-weight: 700;">SUGGEST_TO_AGENT</span>
-                <div style="font-size: 22px; font-weight: 800; color: #1d4ed8; margin-top: 6px;" id="stat-action-suggest">0</div>
-                <span style="font-size: 11px; color: #1e40af;">ارائه پیش‌نویس به کارشناس</span>
+              <div class="decision-card">
+                <span class="decision-card-title" style="color: var(--accent);">SUGGEST_TO_AGENT</span>
+                <div class="decision-card-val" style="color: var(--accent);" id="stat-action-suggest">0</div>
+                <span style="font-size: 11.5px; color: var(--muted-foreground);">پیش‌نویس به کارشناس</span>
               </div>
 
-              <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; padding: 16px; text-align: center;">
-                <span style="font-size: 12px; color: #9a3412; font-weight: 700;">TRANSFER_TO_HUMAN</span>
-                <div style="font-size: 22px; font-weight: 800; color: #c2410c; margin-top: 6px;" id="stat-action-transfer">0</div>
-                <span style="font-size: 11px; color: #9a3412;">ارجاع فوری به پشتیبان انسانی</span>
+              <div class="decision-card">
+                <span class="decision-card-title" style="color: #EA580C;">TRANSFER_TO_HUMAN</span>
+                <div class="decision-card-val" style="color: #C2410C;" id="stat-action-transfer">0</div>
+                <span style="font-size: 11.5px; color: var(--muted-foreground);">ارجاع فوری انسانی</span>
               </div>
 
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; text-align: center;">
-                <span style="font-size: 12px; color: #475569; font-weight: 700;">CLARIFY</span>
-                <div style="font-size: 22px; font-weight: 800; color: #334155; margin-top: 6px;" id="stat-action-clarify">0</div>
-                <span style="font-size: 11px; color: #475569;">درخواست توضیح تکمیلی از کاربر</span>
+              <div class="decision-card">
+                <span class="decision-card-title" style="color: #64748B;">CLARIFY</span>
+                <div class="decision-card-val" style="color: #334155;" id="stat-action-clarify">0</div>
+                <span style="font-size: 11.5px; color: var(--muted-foreground);">درخواست توضیح تکمیلی</span>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 

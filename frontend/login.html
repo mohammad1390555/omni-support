@@ -3,40 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ورود به پنل پشتیبانی OmniSupport AI</title>
+  <title>ورود به پنل هلپ‌دسک هوشمند OmniSupport</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/frontend/css/style.css">
   <style>
     body {
-      background: radial-gradient(circle at 80% 20%, #1e1b4b 0%, #0f172a 100%);
-      color: #f8fafc;
+      background: radial-gradient(circle at 80% 20%, #0F172A 0%, #0B1120 100%);
+      color: #F8FAFC;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(0, 82, 255, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    body::after {
+      content: "";
+      position: absolute;
+      bottom: -150px;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(77, 124, 255, 0.15) 0%, transparent 70%);
+      pointer-events: none;
     }
     .login-container {
-      width: 900px;
+      width: 920px;
       max-width: 100%;
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
+      backdrop-filter: blur(24px);
+      border-radius: var(--radius-xl);
       overflow: hidden;
       display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      grid-template-columns: 1fr 1.15fr;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 82, 255, 0.15);
+      z-index: 10;
     }
     .login-info-side {
-      background: linear-gradient(135deg, rgba(79, 70, 229, 0.3) 0%, rgba(124, 58, 237, 0.15) 100%);
-      padding: 40px 32px;
+      background: linear-gradient(135deg, rgba(0, 82, 255, 0.22) 0%, rgba(77, 124, 255, 0.08) 100%);
+      padding: 44px 36px;
       border-left: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .login-form-side {
-      padding: 40px;
+      padding: 44px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -44,73 +70,84 @@
     .login-logo {
       width: 48px;
       height: 48px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      border-radius: 14px;
+      background: var(--accent-gradient);
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-accent);
     }
     .login-title h2 {
-      font-size: 22px;
-      font-weight: 800;
-      color: #ffffff;
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: #FFFFFF;
       margin-bottom: 6px;
     }
     .login-title p {
       font-size: 13px;
-      color: #94a3b8;
+      color: #94A3B8;
       margin-bottom: 24px;
     }
     .role-desc-card {
-      background: rgba(15, 23, 42, 0.5);
+      background: rgba(11, 17, 32, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: all 0.2s;
+    }
+    .role-desc-card:hover {
+      border-color: rgba(0, 82, 255, 0.4);
+      transform: translateX(-2px);
     }
     .role-desc-card h4 {
       font-size: 13.5px;
       font-weight: 700;
-      color: #f1f5f9;
+      color: #F1F5F9;
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
+      gap: 8px;
+      margin-bottom: 6px;
     }
     .role-desc-card p {
       font-size: 11.5px;
-      color: #94a3b8;
-      line-height: 1.5;
+      color: #94A3B8;
+      line-height: 1.6;
     }
     .glass-input {
-      background: rgba(15, 23, 42, 0.6) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      color: #ffffff !important;
-      border-radius: 10px !important;
-      padding: 12px 14px !important;
+      background: rgba(11, 17, 32, 0.7) !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      color: #FFFFFF !important;
+      border-radius: var(--radius-md) !important;
+      padding: 12px 16px !important;
       width: 100%;
-    }
-    .glass-input:focus {
-      border-color: #818cf8 !important;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-    }
-    .quick-login-chip {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #cbd5e1;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      cursor: pointer;
+      font-size: 13.5px !important;
       transition: all 0.2s;
     }
+    .glass-input:focus {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.3) !important;
+      background: rgba(11, 17, 32, 0.9) !important;
+    }
+    .quick-login-chip {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #CBD5E1;
+      padding: 7px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
     .quick-login-chip:hover {
-      background: rgba(99, 102, 241, 0.3);
-      color: #ffffff;
-      border-color: #818cf8;
+      background: rgba(0, 82, 255, 0.3);
+      color: #FFFFFF;
+      border-color: var(--accent);
+      transform: translateY(-1px);
     }
     @media (max-width: 768px) {
       .login-container { grid-template-columns: 1fr; }
@@ -125,22 +162,28 @@
     <div class="login-info-side">
       <div>
         <div class="login-logo">⚡</div>
-        <h3 style="font-size: 18px; font-weight: 800; color: #ffffff; margin-bottom: 6px;">پلتفرم پشتیبانی هوشمند OmniSupport</h3>
-        <p style="font-size: 12.5px; color: #94a3b8; margin-bottom: 24px;">سطوح دسترسی و کنترل هوشمند تیمی:</p>
+        <div class="section-badge" style="background: rgba(0, 82, 255, 0.2); border-color: rgba(0, 82, 255, 0.4); color: #93C5FD;">
+          <span class="pulsing-dot" style="background-color: #60A5FA;"></span>
+          <span>ENTERPRISE HELPDESK</span>
+        </div>
+        <h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #FFFFFF; margin: 8px 0 6px;">
+          پلتفرم هلپ‌دسک و تیکتینگ <span class="gradient-text">OmniSupport</span>
+        </h3>
+        <p style="font-size: 12.5px; color: #94A3B8; margin-bottom: 24px;">سطوح دسترسی و تفکیک نقش‌های کاربری:</p>
 
         <div class="role-desc-card">
-          <h4>👑 مدیر سیستم (Admin Role)</h4>
-          <p>دسترسی نامحدود به تنظیمات هوش مصنوعی، اتصال Base URL، کلیدهای API، تعریف و مدیریت اعضای تیم، آمار و گزارشات جامع.</p>
+          <h4>👑 مدیر ارشد سیستم (Admin)</h4>
+          <p>کنترل کامل بر تنظیمات هوش مصنوعی، تعریف Base URL و مدل، کلیدهای API، مدیریت اعضای تیم، آمار و گزارشات جامع SLA.</p>
         </div>
 
         <div class="role-desc-card">
-          <h4>🎧 اپراتور / پشتیبان (Agent Member)</h4>
-          <p>میزکار اختصاصی و امن چت زنده، پاسخ‌گویی به مشتریان، استفاده از پاسخ‌های آماده، و ثبت پاسخ‌های جدید در حافظه هوش مصنوعی (بدون دسترسی به تنظیمات حساس سرور).</p>
+          <h4>🎧 کارشناس پشتیبانی (Agent Member)</h4>
+          <p>میزکار اختصاصی تیکت‌ها، پاسخ‌گویی به مشتریان، یادداشت‌های محرمانه داخلی و ثبت مستقیم پاسخ‌ها در حافظه یادگیری هوش مصنوعی.</p>
         </div>
       </div>
 
-      <div style="font-size: 11.5px; color: #64748b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px;">
-        قدرت‌گرفته از موتور تصمیم‌گیری ایمن TypeSafe AI
+      <div style="font-size: 11.5px; color: #64748B; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 16px; display: flex; align-items: center; gap: 6px;">
+        <span>🔒 قدرت‌گرفته از موتور تصمیم‌گیری TypeSafe AI</span>
       </div>
     </div>
 
@@ -152,46 +195,46 @@
       </div>
 
       <!-- Quick Fill Buttons -->
-      <div style="margin-bottom: 20px;">
-        <span style="font-size: 11.5px; color: #94a3b8; display: block; margin-bottom: 6px;">ورود آزمایشی سریع با یک کلیک:</span>
+      <div style="margin-bottom: 22px;">
+        <span style="font-size: 11.5px; color: #94A3B8; display: block; margin-bottom: 8px;">ورود آزمایشی سریع با یک کلیک:</span>
         <div style="display: flex; gap: 8px;">
           <button type="button" class="quick-login-chip" onclick="fillCreds('admin', 'admin123')">
-            👑 ورود به عنوان مدیر (Admin)
+            👑 ورود مدیر (Admin)
           </button>
           <button type="button" class="quick-login-chip" onclick="fillCreds('agent1', 'agent123')">
-            🎧 ورود به عنوان پشتیبان (Member)
+            🎧 ورود کارشناس (Agent)
           </button>
         </div>
       </div>
 
       <form id="form-login">
         <div class="form-group" style="margin-bottom: 16px;">
-          <label class="form-label" style="color: #ffffff;">نام کاربری (Username)</label>
-          <input type="text" class="glass-input" id="login-username" required placeholder="نام کاربری">
+          <label class="form-label" style="color: #FFFFFF;">نام کاربری (Username)</label>
+          <input type="text" class="glass-input" id="login-username" required placeholder="admin یا agent1">
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <label class="form-label" style="color: #ffffff; margin-bottom: 0;">کلمه عبور (Password)</label>
-            <span style="font-size: 11.5px; color: #818cf8; cursor: pointer;" onclick="togglePasswordVis()">نمایش رمز</span>
+            <label class="form-label" style="color: #FFFFFF; margin-bottom: 0;">کلمه عبور (Password)</label>
+            <span style="font-size: 11.5px; color: #60A5FA; cursor: pointer;" onclick="togglePasswordVis()">نمایش رمز</span>
           </div>
           <input type="password" class="glass-input" id="login-password" required placeholder="کلمه عبور">
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-          <label style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #94a3b8; cursor: pointer;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #94A3B8; cursor: pointer;">
             <input type="checkbox" id="remember-me" checked>
             <span>مرا به خاطر بسپار</span>
           </label>
-          <a href="/install" style="font-size: 12px; color: #818cf8; text-decoration: none;">⚙ راه‌اندازی و Installer</a>
+          <a href="/install" style="font-size: 12px; color: #60A5FA; text-decoration: none;">⚙ راه‌اندازی و Installer</a>
         </div>
 
-        <button type="submit" class="btn-primary" id="btn-submit-login" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px;">
-          ورود به پنل پشتیبانی →
+        <button type="submit" class="btn-primary" id="btn-submit-login" style="width: 100%; justify-content: center; padding: 13px; font-size: 14px;">
+          ورود به پنل هلپ‌دسک →
         </button>
       </form>
 
-      <div id="login-error-box" style="margin-top: 14px; padding: 10px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 12.5px; display: none;"></div>
+      <div id="login-error-box" style="margin-top: 14px; padding: 10px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; font-size: 12.5px; display: none;"></div>
     </div>
   </div>
 
@@ -235,13 +278,13 @@
           errBox.textContent = err.detail || 'نام کاربری یا کلمه عبور نادرست است.';
           errBox.style.display = 'block';
           submitBtn.disabled = false;
-          submitBtn.textContent = 'ورود به پنل پشتیبانی →';
+          submitBtn.textContent = 'ورود به پنل هلپ‌دسک →';
         }
       } catch (err) {
         errBox.textContent = 'خطای ارتباط با سرور: ' + err.message;
         errBox.style.display = 'block';
         submitBtn.disabled = false;
-        submitBtn.textContent = 'ورود به پنل پشتیبانی →';
+        submitBtn.textContent = 'ورود به پنل هلپ‌دسک →';
       }
     });
   </script>

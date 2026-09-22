@@ -4,70 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>پورتال پیگیری تیکت‌های مشتریان | OmniSupport Helpdesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/frontend/css/style.css">
   <style>
     body {
-      background-color: #f8fafc;
-      color: #0f172a;
+      background-color: #FAFAFA;
+      color: #0F172A;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
     .portal-header {
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 16px 40px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 18px 48px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
     .portal-logo {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: #0F172A;
+    }
+    .portal-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-gradient);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      box-shadow: var(--shadow-accent);
       font-size: 18px;
-      font-weight: 800;
-      color: var(--primary);
     }
     .portal-container {
-      max-width: 860px;
+      max-width: 900px;
       width: 100%;
-      margin: 36px auto;
-      padding: 0 16px;
+      margin: 40px auto;
+      padding: 0 20px;
       flex: 1;
     }
     .track-search-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      margin-bottom: 24px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 28px;
+      position: relative;
     }
     .ticket-view-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-xl);
       overflow: hidden;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow-xl);
       display: none;
     }
     .ticket-view-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid #e2e8f0;
-      background: #fafafa;
+      padding: 24px 30px;
+      border-bottom: 1px solid #E2E8F0;
+      background: #FFFFFF;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
     }
     .ticket-messages-pane {
-      padding: 24px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      max-height: 500px;
+      gap: 18px;
+      max-height: 520px;
       overflow-y: auto;
-      background: #f8fafc;
+      background: #F8FAFC;
     }
   </style>
 </head>
@@ -75,39 +93,44 @@
 
   <header class="portal-header">
     <div class="portal-logo">
-      <span>🎫</span>
-      <span>سامانه پیگیری تیکت‌های پشتیبانی</span>
+      <div class="portal-logo-icon">🎫</div>
+      <span>پورتال پیگیری تیکت‌های پشتیبانی</span>
     </div>
-    <div style="font-size: 13px; color: #64748b;">
-      پاسخگویی هوشمند ۲۴ ساعته
+    <div style="font-size: 13px; color: #64748B; display: flex; align-items: center; gap: 8px;">
+      <span class="pulsing-dot"></span>
+      <span>پاسخگویی ۲۴ ساعته با هوش مصنوعی و کارشناس</span>
     </div>
   </header>
 
   <main class="portal-container">
     <!-- Ticket Lookup Card -->
     <div class="track-search-card">
-      <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">پیگیری وضعیت تیکت با شماره پیگیری</h2>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">شماره پیگیری تیکت خود را (مثلاً <code>HD-1001</code>) وارد کنید تا تاریخچه و پاسخ‌های کارشناس را مشاهده نمایید:</p>
-      
-      <div style="display: flex; gap: 10px;">
-        <input type="text" class="form-input" id="portal-ticket-code" placeholder="مثال: HD-1001" style="flex: 1; font-weight: 700; text-transform: uppercase;">
-        <button class="btn-primary" id="btn-track-ticket" style="padding: 10px 24px;">جستجو و مشاهده تیکت</button>
+      <div class="section-badge">
+        <span class="pulsing-dot"></span>
+        <span>TICKET TRACKING</span>
       </div>
-      <div id="portal-error" style="color: #ef4444; font-size: 12.5px; margin-top: 8px; display: none;"></div>
+      <h2 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 6px 0 8px;">پیگیری وضعیت تیکت با شماره رهگیری</h2>
+      <p style="font-size: 13px; color: #64748B; margin-bottom: 20px;">شماره پیگیری تیکت خود را (مثلاً <code style="font-family: var(--font-mono); font-weight: 700; background: #E2E8F0; padding: 2px 6px; border-radius: 4px;">HD-1001</code>) وارد کنید تا تاریخچه و پاسخ‌های کارشناس را مشاهده نمایید:</p>
+      
+      <div style="display: flex; gap: 12px;">
+        <input type="text" class="form-input" id="portal-ticket-code" placeholder="مثال: HD-1001" style="flex: 1; font-family: var(--font-mono); font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 0.05em;">
+        <button class="btn-primary" id="btn-track-ticket" style="padding: 12px 28px;">جستجو و مشاهده تیکت</button>
+      </div>
+      <div id="portal-error" style="color: #EF4444; font-size: 12.5px; margin-top: 10px; display: none;"></div>
     </div>
 
     <!-- Active Ticket View Card -->
     <div class="ticket-view-card" id="ticket-view-card">
       <div class="ticket-view-header">
         <div>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <span style="background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700; font-family: monospace;" id="p-ticket-num">HD-1001</span>
-            <span class="status-pill active" id="p-ticket-status">در حال بررسی</span>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <span class="ticket-code" id="p-ticket-num" style="background: var(--accent-gradient); color: #fff; padding: 3px 10px; font-size: 12px;">HD-1001</span>
+            <span class="status-pill open" id="p-ticket-status">در حال بررسی</span>
           </div>
-          <h3 style="font-size: 16px; font-weight: 800;" id="p-ticket-subject">موضوع تیکت</h3>
-          <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-            <span>کارشناس پاسخگو: <strong id="p-ticket-agent">-</strong></span>
-            <span style="margin: 0 6px;">•</span>
+          <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: #0F172A;" id="p-ticket-subject">موضوع تیکت</h3>
+          <div style="font-size: 12.5px; color: #64748B; margin-top: 6px;">
+            <span>کارشناس پاسخگو: <strong id="p-ticket-agent" style="color: #0F172A;">-</strong></span>
+            <span style="margin: 0 8px;">•</span>
             <span>تاریخ ثبت: <span id="p-ticket-date">-</span></span>
           </div>
         </div>
@@ -119,8 +142,8 @@
       </div>
 
       <!-- Customer Reply Box -->
-      <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; background: #ffffff;">
-        <form id="portal-reply-form" style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="padding: 20px 30px; border-top: 1px solid #E2E8F0; background: #FFFFFF;">
+        <form id="portal-reply-form" style="display: flex; flex-direction: column; gap: 12px;">
           <textarea class="form-textarea rtl" id="portal-reply-text" rows="3" placeholder="ارسال پاسخ جدید به کارشناس پشتیبانی..."></textarea>
           <div style="display: flex; justify-content: flex-end;">
             <button type="submit" class="btn-primary" id="btn-send-portal-reply">ارسال پاسخ</button>
@@ -175,10 +198,10 @@
           const time = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           return `
             <div style="display: flex; flex-direction: column; align-self: ${isCustomer ? 'flex-start' : 'flex-end'}; max-width: 80%;">
-              <div style="background: ${isCustomer ? '#4f46e5' : '#ffffff'}; color: ${isCustomer ? '#fff' : '#1e293b'}; border: 1px solid ${isCustomer ? 'transparent' : '#e2e8f0'}; border-radius: 12px; padding: 12px 16px; font-size: 13.5px; line-height: 1.6; word-break: break-word;">
+              <div style="background: ${isCustomer ? 'var(--accent-gradient)' : '#FFFFFF'}; color: ${isCustomer ? '#FFFFFF' : '#0F172A'}; border: 1px solid ${isCustomer ? 'transparent' : '#E2E8F0'}; border-radius: 14px; padding: 14px 18px; font-size: 13.5px; line-height: 1.65; word-break: break-word; box-shadow: ${isCustomer ? 'var(--shadow-accent)' : 'var(--shadow-sm)'};">
                 ${m.content}
               </div>
-              <span style="font-size: 11px; color: #94a3b8; margin-top: 4px; padding: 0 4px; text-align: ${isCustomer ? 'right' : 'left'};">
+              <span style="font-size: 11px; color: #94A3B8; margin-top: 4px; padding: 0 4px; text-align: ${isCustomer ? 'right' : 'left'}; font-family: var(--font-mono);">
                 ${m.sender_name} • ${time}
               </span>
             </div>
@@ -219,7 +242,6 @@
       }
     });
 
-    // Check URL params
     const urlParams = new URLSearchParams(window.location.search);
     const codeParam = urlParams.get("ticket");
     if (codeParam) {
