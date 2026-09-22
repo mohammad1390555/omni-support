@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فروشگاه آنلاین آران | دموی وب‌سایت مشتری</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Vazirmatn", Tahoma, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      direction: rtl;
+    }
+    /* Demo Notice Bar */
+    .demo-bar {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      color: #ffffff;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    }
+    .demo-bar a {
+      color: #ffffff;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .demo-bar a:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .hero-content h1 {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.3;
+      margin-bottom: 16px;
+      color: #1e1b4b;
+    }
+    .hero-content p {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .hero-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    }
+    .hero-box h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sim-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sim-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: right;
+      transition: all 0.2s;
+      font-family: inherit;
+      color: var(--text);
+    }
+    .sim-btn:hover {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: var(--primary);
+    }
+
+    /* Products Grid */
+    .section-title {
+      max-width: 1200px;
+      margin: 40px auto 20px;
+      padding: 0 20px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .products-grid {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 20px -5px rgba(0,0,0,0.08);
+    }
+    .product-img {
+      height: 180px;
+      background: linear-gradient(135deg, #e0e7ff 0%, #fae8ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .product-info {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .product-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .product-price {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: auto;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-buy {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo Notice Banner -->
+  <div class="demo-bar">
+    <span>💡 این صفحه شبیه‌ساز سایت مشتری شماست. ویجت چت در پایین سمت راست آماده آزمایش است!</span>
+    <a href="/" target="_blank">بازگشت به پنل ادمین پشتیبانی ↗</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <span>🛍️</span>
+      <span>فروشگاه اینترنتی آران کالا</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">صفحه اصلی</a></li>
+      <li><a href="#">محصولات دیجیتال</a></li>
+      <li><a href="#">تخفیف‌های ویژه</a></li>
+      <li><a href="#">قوانین و ضمانت</a></li>
+      <li><a href="#">تماس با ما</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>تجربه خرید آنلاین مطمئن با پشتیبانی ۲۴ ساعته هوشمند</h1>
+      <p>هر سوالی درباره محصولات، ساعات ارسال، شرایط عودت وجه یا دریافت فاکتور رسمی دارید، کافیست از دکمه چت در گوشه صفحه بپرسید.</p>
+      <div style="display: flex; gap: 12px;">
+        <span style="background: #ecfdf5; color: #047857; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ پاسخ‌دهی زیر ۳ ثانیه</span>
+        <span style="background: #eef2ff; color: #4338ca; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ هوش مصنوعی TypeSafe</span>
+        <span style="background: #fefce8; color: #854d0e; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ امکان انتقال به پشتیبان واقعی</span>
+      </div>
+    </div>
+
+    <!-- Quick Question Simulator Box -->
+    <div class="hero-box">
+      <h3>
+        <span>⚡</span>
+        <span>تست سریع سوالات رایج</span>
+      </h3>
+      <p style="font-size: 12.5px; color: var(--muted); margin-bottom: 14px;">روی هر گزینه کلیک کنید تا چت باز شده و سوال ارسال شود:</p>
+      
+      <div class="sim-btn-group">
+        <button class="sim-btn" onclick="simulateQuestion('سلام! ساعات کاری پشتیبانی و پاسخگویی به چه صورت هست؟')">
+          🕒 سوال درباره ساعات کاری (تست FAQ پایگاه دانش)
+        </button>
+
+        <button class="sim-btn" onclick="simulateQuestion('سلام، شرایط بازگشت پول و استرداد وجه چیه؟')">
+          💳 سوال درباره بازگشت وجه (تست قوانین)
+        </button>
+
+        <button class="sim-btn" onclick="simulateQuestion('آیا برای خریدم فاکتور رسمی شرکتی با شناسه ملی صادر می‌کنید؟')">
+          📄 سوال درباره فاکتور رسمی (تست دانش یادگرفته از پشتیبان)
+        </button>
+
+        <button class="sim-btn" onclick="simulateQuestion('من به شدت ناراضی‌ام و میخوام با یک پشتیبان واقعی انسانی صحبت کنم!')">
+          👤 درخواست پشتیبان واقعی و شکایت (تست ارجاع به انسان)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sample Products Grid -->
+  <h2 class="section-title">جدیدترین محصولات</h2>
+  <div class="products-grid">
+    <div class="product-card">
+      <div class="product-img">🎧</div>
+      <div class="product-info">
+        <div class="product-title">هدفون بی‌سیم نویز کنسلینگ پرو</div>
+        <p style="font-size: 12.5px; color: var(--muted);">کیفیت صدای شفاف با باتری ۳۰ ساعته</p>
+        <div class="product-price">
+          <span>۲,۸۵۰,۰۰۰ تومان</span>
+          <button class="btn-buy">خرید</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">⌚</div>
+      <div class="product-info">
+        <div class="product-title">ساعت هوشمند اولترا سری ۹</div>
+        <p style="font-size: 12.5px; color: var(--muted);">سنسور اکسیژن خون و پایش ضربان قلب</p>
+        <div class="product-price">
+          <span>۴,۲۰۰,۰۰۰ تومان</span>
+          <button class="btn-buy">خرید</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <div class="product-img">💻</div>
+      <div class="product-info">
+        <div class="product-title">لپ‌تاپ فوق‌باریک ۱۴ اینچ اولترابوک</div>
+        <p style="font-size: 12.5px; color: var(--muted);">پردازنده نسل جدید و حافظه ۱۶ گیگابایت</p>
+        <div class="product-price">
+          <span>۳۸,۹۰۰,۰۰۰ تومان</span>
+          <button class="btn-buy">خرید</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embed the OmniSupport Live Widget -->
+  <script src="/static/widget.js" data-site-id="site_default" async></script>
+
+  <script>
+    function simulateQuestion(text) {
+      // Open widget launcher
+      const launcher = document.getElementById("omni-launcher-btn");
+      if (launcher && !launcher.classList.contains("open")) {
+        launcher.click();
+      }
+      setTimeout(() => {
+        const input = document.getElementById("omni-input-field");
+        const form = document.getElementById("omni-input-form");
+        if (input && form) {
+          input.value = text;
+          form.dispatchEvent(new Event("submit"));
+        }
+      }, 350);
+    }
+  </script>
+</body>
+</html>

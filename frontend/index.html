@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniSupport AI | پنل پشتیبانی هوشمند و چندکاناله</title>
+  <link rel="stylesheet" href="/frontend/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">⚡</div>
+        <div class="sidebar-title">
+          <h2>OmniSupport AI</h2>
+          <span>سامانه پشتیبانی هوشمند و بلادرنگ</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-tab="tab-chat" id="nav-chat">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>چت زنده و صندوق پیام‌ها</span>
+          <span class="nav-badge" id="active-convs-count">0</span>
+        </a>
+
+        <a class="nav-item" data-tab="tab-ai-settings" id="nav-ai">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>هوش مصنوعی و TypeSafe</span>
+        </a>
+
+        <a class="nav-item" data-tab="tab-knowledge" id="nav-knowledge">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>پایگاه دانش و حافظه یادگیری</span>
+        </a>
+
+        <a class="nav-item" data-tab="tab-sites" id="nav-sites">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>وب‌سایت‌ها و کد ویجت</span>
+        </a>
+
+        <a class="nav-item" data-tab="tab-docs" id="nav-docs">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>آموزش و مستندات اتصال</span>
+        </a>
+
+        <a class="nav-item" href="/widget-demo" target="_blank" style="margin-top: 12px; background: rgba(99, 102, 241, 0.12); color: #c7d2fe;">
+          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>مشاهده دموی سایت مشتری</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="agent-profile">
+          <div class="agent-avatar">
+            <span>A</span>
+            <div class="agent-status-indicator"></div>
+          </div>
+          <div class="agent-info">
+            <h4>مدیر پشتیبانی</h4>
+            <p>آنلاین (آماده پاسخگویی)</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="main-viewport">
+      
+      <!-- ==============================================
+           TAB 1: LIVE CHAT WORKSPACE
+           ============================================== -->
+      <section class="content-tab active" id="tab-chat">
+        <div class="chat-workspace">
+          
+          <!-- Column 1: Conversations List -->
+          <div class="conv-list-pane">
+            <div class="conv-list-header">
+              <h3>
+                <span>گفتگوهای فعال</span>
+                <button class="chat-action-btn" id="btn-refresh-convs" title="بروزرسانی">↻</button>
+              </h3>
+              
+              <div class="conv-filter-tabs">
+                <div class="filter-tab active" data-filter="all">همه</div>
+                <div class="filter-tab" data-filter="active">درحال چت</div>
+                <div class="filter-tab" data-filter="pending_human">نیاز به انسان</div>
+                <div class="filter-tab" data-filter="resolved">حل‌شده</div>
+              </div>
+
+              <div class="conv-search-box">
+                <input type="text" class="conv-search-input" id="conv-search" placeholder="جستجو در نام، ایمیل یا تیکت...">
+              </div>
+            </div>
+
+            <div class="conv-items-container" id="conv-items-list">
+              <!-- Rendered via JS -->
+              <div style="padding: 24px; text-align: center; color: var(--text-light); font-size: 13px;">
+                در حال بارگذاری گفتگوها...
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Active Conversation & Messages -->
+          <div class="chat-main-pane" id="chat-main-pane">
+            
+            <div class="chat-header-bar" id="chat-header-bar" style="display: none;">
+              <div class="chat-header-user">
+                <div class="conv-item-avatar" id="active-conv-avatar">؟</div>
+                <div>
+                  <h3 id="active-conv-title">کاربر</h3>
+                  <div class="chat-header-meta">
+                    <span id="active-conv-page">صفحه: نامشخص</span>
+                    <span>•</span>
+                    <span id="active-conv-device">دستگاه</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-header-actions">
+                <!-- AI Mode Controls -->
+                <div class="mode-toggle-group">
+                  <button class="mode-btn active" data-mode="auto" id="mode-auto" title="هوش مصنوعی در صورت اطمینان خودکار جواب می‌دهد">🤖 پاسخ خودکار AI</button>
+                  <button class="mode-btn" data-mode="copilot" id="mode-copilot" title="هوش مصنوعی پیش‌نویس آماده می‌کند ولی پشتیبان ارسال می‌کند">💡 دستیار هوشمند</button>
+                  <button class="mode-btn" data-mode="human_only" id="mode-human" title="هوش مصنوعی خاموش؛ فقط انسان جواب می‌دهد">👤 فقط انسان</button>
+                </div>
+
+                <button class="chat-action-btn resolve-btn" id="btn-resolve-conv" title="پایان گفتگو و حل تیکت">
+                  ✓ بستن گفتگو
+                </button>
+              </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div class="chat-feed" id="chat-feed">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-light); gap: 10px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <p>یک گفتگو را از ستون سمت راست انتخاب کنید یا از دمو پیامی ارسال نمایید.</p>
+              </div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="chat-input-bar" id="chat-input-bar" style="display: none;">
+              <div class="quick-replies-row">
+                <span style="font-size: 11px; color: var(--text-muted); align-self: center;">پاسخ‌های سریع:</span>
+                <div class="quick-chip" onclick="insertQuickReply('سلام و درود! چطور می‌تونم کمکتون کنم؟')">سلام و احوالپرسی</div>
+                <div class="quick-chip" onclick="insertQuickReply('لطفاً شماره سفارش یا آدرس ایمیل ثبت‌نامی خود را ارسال نمایید.')">درخواست شماره سفارش</div>
+                <div class="quick-chip" onclick="insertQuickReply('موضوع شما به واحد فنی ارجاع شد و طی دقایق آینده برطرف خواهد شد.')">ارجاع به واحد فنی</div>
+                <div class="quick-chip" onclick="insertQuickReply('خوشحالیم که مشکل شما حل شد! روز خوبی داشته باشید.')">تشکر و پایان چت</div>
+              </div>
+
+              <div class="chat-input-row">
+                <textarea class="chat-textarea" id="agent-msg-input" placeholder="پاسخ خود را به عنوان پشتیبان بنویسید (Enter برای ارسال)..." rows="2"></textarea>
+                <button class="btn-send-agent" id="btn-agent-send">
+                  <span>ارسال</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" transform="rotate(180 12 12)"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: TypeSafe Decision Inspector Sidebar -->
+          <div class="inspector-pane" id="inspector-pane">
+            <div class="inspector-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <h4>تحلیلگر هوشمند تصمیم‌گیری (TypeSafe Inspector)</h4>
+            </div>
+
+            <div class="inspector-card">
+              <div class="inspector-field">
+                <div class="inspector-label">نیت پیام کاربر (Intent)</div>
+                <div class="inspector-val" id="insp-intent">هنوز پیامی دریافت نشده</div>
+              </div>
+
+              <div class="inspector-field">
+                <div class="inspector-label">میزان قطعیت هوش مصنوعی (Confidence)</div>
+                <div class="inspector-val" id="insp-confidence">0%</div>
+                <div class="confidence-bar-bg">
+                  <div class="confidence-bar-fill" id="insp-conf-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <div class="inspector-field">
+                <div class="inspector-label">تصمیم نهایی اقدام (Chosen Action)</div>
+                <div class="inspector-val" id="insp-action" style="color: var(--primary);">-</div>
+              </div>
+
+              <div class="inspector-field">
+                <div class="inspector-label">دلیل و استدلال مدل (Decision Rationale)</div>
+                <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;" id="insp-reason">-</p>
+              </div>
+
+              <div class="inspector-field">
+                <div class="inspector-label">ارزیابی گزینه‌های اقدام (Evaluated Options)</div>
+                <div class="options-eval-list" id="insp-options-list">
+                  <span style="font-size: 11px; color: var(--text-light);">گزینه‌ای ثبت نشده است</span>
+                </div>
+              </div>
+
+              <div class="inspector-field" style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px;">
+                <div class="inspector-label">مدل و تاخیر زمانی (Model & Latency)</div>
+                <div style="font-size: 11.5px; color: var(--text-muted);" id="insp-model-meta">-</div>
+              </div>
+            </div>
+
+            <div style="padding: 0 16px 16px 16px;">
+              <div style="background: #eef2ff; border: 1px dashed var(--primary); border-radius: var(--radius-sm); padding: 12px; font-size: 11.5px; line-height: 1.5; color: #3730a3;">
+                💡 <strong>سیستم TypeSafe چیست؟</strong><br>
+                قبل از ارسال هر جواب، هوش مصنوعی ابتدا گزینه‌های AUTO_ANSWER، SUGGEST_TO_AGENT، و TRANSFER_TO_HUMAN را در چارچوب یک JSON معتبر می‌سنجد. اگر اطمینان کمتر از آستانه باشد، مکالمه را امن نگه می‌دارد و به پشتیبان ارجاع می‌دهد.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 2: AI SETTINGS & PROVIDER CONFIG
+           ============================================== -->
+      <section class="content-tab" id="tab-ai-settings">
+        <div class="settings-view">
+          <div class="page-header">
+            <h2>تنظیمات ارائه‌دهنده هوش مصنوعی و پروتکل تصمیم‌گیری</h2>
+            <p>قابلیت اتصال به OpenAI، DeepSeek، Groq، OpenRouter، سرورهای لوکال Ollama و هر API سازگار با OpenAI</p>
+          </div>
+
+          <!-- Quick Preset Selectors -->
+          <div class="settings-card">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>انتخاب سریع ارائه‌دهنده (1-Click Provider Presets)</span>
+            </div>
+            <div class="preset-grid" id="preset-grid-container">
+              <!-- Preset Cards populated via JS -->
+            </div>
+          </div>
+
+          <!-- Connection Form -->
+          <form class="settings-card" id="form-ai-settings">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>مشخصات اتصال API و مدل (Credentials & Base URL)</span>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">نام ارائه‌دهنده (Provider Name)</label>
+                <input type="text" class="form-input rtl" id="ai-provider-name" placeholder="مثال: DeepSeek یا OpenAI">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">آدرس پایه وب‌سرویس (Base Link / Base URL)</label>
+                <input type="text" class="form-input" id="ai-base-url" placeholder="https://api.openai.com/v1">
+                <span class="form-hint">آدرس روت اندپوینت سازگار با پروتکل استاندارد OpenAI</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">کلید دسترسی (API Key)</label>
+                <div style="position: relative; display: flex;">
+                  <input type="password" class="form-input" id="ai-api-key" placeholder="sk-..." style="flex: 1; padding-left: 36px;">
+                  <button type="button" id="btn-toggle-key-vis" style="position: absolute; left: 8px; top: 10px; background: none; border: none; cursor: pointer; color: var(--text-muted);" title="نمایش/مخفی">👁</button>
+                </div>
+                <span class="form-hint" id="ai-key-hint">کلید برای حفظ امنیت به صورت ایمن ذخیره می‌شود.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">نام مدل انتخابی (Model Name)</label>
+                <input type="text" class="form-input" id="ai-model-name" placeholder="gpt-4o-mini یا deepseek-chat">
+                <span class="form-hint">نام دقیق شناسه مدل ارائه‌دهنده</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">درجه خلاقیت (Temperature: <span id="temp-display">0.2</span>)</label>
+                <div class="slider-container">
+                  <input type="range" class="slider-input" id="ai-temp" min="0.0" max="1.0" step="0.05" value="0.2">
+                </div>
+                <span class="form-hint">مقادیر پایین‌تر (0.1 تا 0.3) برای پاسخ‌های قطعی و دقیق پشتیبانی ایده‌آل است.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">حداکثر توکن خروجی (Max Tokens)</label>
+                <input type="number" class="form-input" id="ai-max-tokens" value="1000">
+              </div>
+
+              <!-- TypeSafe Decision Layer Controls -->
+              <div class="form-group full-width" style="border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px;">
+                <div class="card-title" style="margin-bottom: 8px;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>تنظیمات هوش تصمیم‌گیرنده ایمن (TypeSafe Decision Engine)</span>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label">آستانه اطمینان برای پاسخ خودکار (Decision Threshold: <span id="threshold-display">75%</span>)</label>
+                <div class="slider-container">
+                  <input type="range" class="slider-input" id="ai-threshold" min="0.50" max="0.95" step="0.05" value="0.75">
+                </div>
+                <span class="form-hint">اگر میزان قطعیت مدل از این درصد کمتر باشد، مستقیماً به پشتیبان ارجاع می‌شود یا پیش‌نویس آماده می‌کند.</span>
+              </div>
+
+              <div class="form-group full-width">
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <h4>فعال‌سازی لایه ارزیابی گزینه‌ها (TypeSafe JSON Schema Evaluation)</h4>
+                    <p>مدل قبل از نوشتن پاسخ، گزینه‌های AUTO_ANSWER، SUGGEST و TRANSFER را با امتیاز ارزیابی می‌کند.</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="ai-enable-typesafe" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <h4>یادگیری خودکار از پاسخ‌های پشتیبان‌های انسانی (Agent-to-AI Learning)</h4>
+                    <p>پاسخ‌های تایپ‌شده توسط پشتیبانان ذخیره شده و هوش مصنوعی در چت‌های بعدی از آن‌ها استفاده می‌کند.</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="ai-enable-learning" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+
+                <div class="toggle-row">
+                  <div class="toggle-info">
+                    <h4>انتقال فوری به پشتیبان انسانی در صورت شکایت یا نارضایتی کاربر</h4>
+                    <p>تشخیص پیام‌های اعتراضی یا خشم کاربر و ارجاع با اولویت بالا به انسان.</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="ai-handoff-complaint" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label">دستورالعمل سیستمی پشتیبان (System Prompt)</label>
+                <textarea class="form-textarea rtl" id="ai-system-prompt" rows="4"></textarea>
+                <span class="form-hint">هویت، لحن و چارچوب رفتاری هوش مصنوعی در گفتگو با کاربران</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 24px; align-items: center;">
+              <button type="submit" class="btn-primary" id="btn-save-ai">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>ذخیره تنظیمات</span>
+              </button>
+
+              <button type="button" class="btn-secondary" id="btn-test-connection">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span>تست زنده اتصال (Ping Test)</span>
+              </button>
+            </div>
+
+            <div class="test-result-box" id="test-result-box"></div>
+          </form>
+
+          <!-- Audit Log Table of Decisions -->
+          <div class="settings-card">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span>تاریخچه و لاگ تصمیمات اخیر هوش مصنوعی (TypeSafe Decision Audit)</span>
+            </div>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: right;">
+                <thead>
+                  <tr style="background: #f1f5f9; color: var(--text-muted); border-bottom: 1px solid var(--border);">
+                    <th style="padding: 10px 12px;">زمان</th>
+                    <th style="padding: 10px 12px;">پیام کاربر</th>
+                    <th style="padding: 10px 12px;">نیت (Intent)</th>
+                    <th style="padding: 10px 12px;">قطعیت</th>
+                    <th style="padding: 10px 12px;">اقدام اتخاذشده</th>
+                    <th style="padding: 10px 12px;">دلیل تصمیم</th>
+                    <th style="padding: 10px 12px;">تاخیر</th>
+                  </tr>
+                </thead>
+                <tbody id="decision-audit-tbody">
+                  <tr>
+                    <td colspan="7" style="padding: 20px; text-align: center; color: var(--text-light);">هنوز تصمیمی ثبت نشده است.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 3: KNOWLEDGE BASE & AI MEMORY
+           ============================================== -->
+      <section class="content-tab" id="tab-knowledge">
+        <div class="docs-view">
+          <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+              <h2>پایگاه دانش و حافظه یادگیری هوش مصنوعی</h2>
+              <p>مجموعه پاسخ‌های متداول (FAQ) و راهکارهایی که هوش مصنوعی مستقیماً از پشتیبانان انسانی یاد گرفته است.</p>
+            </div>
+            <button class="btn-primary" id="btn-open-add-kb">
+              + افزودن سوال و پاسخ جدید
+            </button>
+          </div>
+
+          <!-- Knowledge Retrieval Simulator -->
+          <div class="settings-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-color: #a7f3d0;">
+            <div class="card-title" style="color: #065f46;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>آزمایشگر استخراج دانش هوش مصنوعی (Semantic Knowledge Tester)</span>
+            </div>
+            <p style="font-size: 13px; color: #047857; margin-bottom: 12px;">یک سوال فرضی کاربر را تایپ کنید تا بلافاصله ببینید سیستم کدام پاسخ‌ها را استخراج و چند درصد تطابق می‌دهد:</p>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" class="form-input rtl" id="test-kb-input" placeholder="مثلاً: شرایط بازگشت پول یا فاکتور رسمی..." style="flex: 1;">
+              <button class="btn-primary" id="btn-run-kb-test" style="background-color: #059669;">آزمایش استخراج</button>
+            </div>
+            <div id="test-kb-output" style="margin-top: 12px; font-size: 12.5px;"></div>
+          </div>
+
+          <!-- Search & Filter bar -->
+          <div style="display: flex; gap: 12px; align-items: center; margin-top: 24px;">
+            <input type="text" class="form-input rtl" id="kb-search-input" placeholder="جستجو در بین اسناد و پاسخ‌های یادگرفته‌شده..." style="flex: 1;">
+            <select class="form-select rtl" id="kb-filter-cat">
+              <option value="">همه دسته‌بندی‌ها</option>
+              <option value="agent_learned">🎓 یادگرفته‌شده از پشتیبان انسانی</option>
+              <option value="faq">❓ پرسش‌های متداول (FAQ)</option>
+              <option value="policy">📜 قوانین و استرداد</option>
+              <option value="technical">🛠️ فنی و راهنما</option>
+            </select>
+          </div>
+
+          <!-- Knowledge Items Grid -->
+          <div class="kb-grid" id="kb-grid-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 4: WEBSITES & WIDGET MANAGEMENT
+           ============================================== -->
+      <section class="content-tab" id="tab-sites">
+        <div class="docs-view">
+          <div class="page-header">
+            <h2>مدیریت وب‌سایت‌ها و سفارشی‌سازی ویجت چت</h2>
+            <p>سایت‌های متصل را مدیریت کرده و ظاهر، رنگ و پیام خوش‌آمدگویی ویجت را اختصاصی کنید.</p>
+          </div>
+
+          <div class="settings-card">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              <span>تنظیمات ظاهر ویجت چت (Widget Customizer)</span>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">عنوان پنجره چت (Widget Title)</label>
+                <input type="text" class="form-input rtl" id="site-title-input" value="پشتیبانی آنلاین">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">رنگ سازمانی و تم اصلی (Primary Color)</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <input type="color" id="site-color-picker" value="#4f46e5" style="width: 48px; height: 38px; border: none; cursor: pointer; border-radius: 6px;">
+                  <input type="text" class="form-input" id="site-color-hex" value="#4f46e5" style="flex: 1;">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">موقعیت دکمه چت در صفحه</label>
+                <select class="form-select rtl" id="site-position-select">
+                  <option value="right">گوشه پایین سمت راست (پیش‌فرض فارسی)</option>
+                  <option value="left">گوشه پایین سمت چپ</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">شناسه سایت (Site ID)</label>
+                <input type="text" class="form-input" id="site-id-display" value="site_default" readonly style="background: #f1f5f9;">
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label">پیام خوش‌آمدگویی خودکار (Welcome Message)</label>
+                <textarea class="form-textarea rtl" id="site-welcome-input" rows="2">سلام و درود! به مرکز پشتیبانی خوش آمدید. چطور می‌توانیم شما را راهنمایی کنیم؟</textarea>
+              </div>
+            </div>
+
+            <div style="margin-top: 18px;">
+              <button class="btn-primary" id="btn-save-site-theme">ذخیره تغییرات ویجت</button>
+            </div>
+          </div>
+
+          <!-- Embed Code Generator Card -->
+          <div class="settings-card">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>کد اختصاصی اتصال به سایت شما (1-Line Embed Snippet)</span>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 12px;">این تگ تک‌خطی را در انتهای قالب وب‌سایت خود قبل از بسته‌شدن تگ <code>&lt;/body&gt;</code> قرار دهید:</p>
+            
+            <div class="code-box">
+              <button class="btn-copy-code" onclick="copySnippet('embed-code-text')">کپی کد</button>
+              <pre id="embed-code-text">&lt;!-- OmniSupport AI Live Chat Widget --&gt;
+&lt;script src="http://0.0.0.0:8000/static/widget.js" data-site-id="site_default" data-api-url="http://0.0.0.0:8000" async&gt;&lt;/script&gt;</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 5: INTERACTIVE DOCS & TUTORIALS (Requested by user)
+           ============================================== -->
+      <section class="content-tab" id="tab-docs">
+        <div class="docs-view">
+          <div class="page-header">
+            <h2>آموزش کامل، راهنمای گام‌به‌گام و مستندات API</h2>
+            <p>راهنمای جامع راه‌اندازی سریع در کمتر از ۳ دقیقه، اتصال به وردپرس، ری‌اکت، لاراول و تست آنلاین وب‌سرویس</p>
+          </div>
+
+          <!-- Section 1: Quickstart -->
+          <div class="docs-section">
+            <h3>
+              <span>🚀</span>
+              <span>راهنمای شروع سریع در ۳ مرحله</span>
+            </h3>
+            <p>برای شروع به کار پلتفرم پشتیبانی، این مراحل ساده را طی کنید:</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px;">
+              <div style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; background: #f8fafc;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">۱</div>
+                <h4 style="font-size: 14px; margin-bottom: 6px;">تنظیم کلید هوش مصنوعی</h4>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 0;">از تب «هوش مصنوعی و TypeSafe»، ارائه‌دهنده خود را انتخاب کرده، Base URL و کلید API را وارد و تست اتصال بگیرید.</p>
+              </div>
+
+              <div style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; background: #f8fafc;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">۲</div>
+                <h4 style="font-size: 14px; margin-bottom: 6px;">بارگذاری سوالات و قوانین</h4>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 0;">از تب «پایگاه دانش»، پرسش‌های متداول، قوانین استرداد و ساعات کاری خود را بنویسید تا هوش مصنوعی با اطمینان بالا پاسخ دهد.</p>
+              </div>
+
+              <div style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; background: #f8fafc;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">۳</div>
+                <h4 style="font-size: 14px; margin-bottom: 6px;">قرار دادن ویجت در سایت</h4>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 0;">کد اسکریپت تک‌خطی را کپی کرده و در قالب سایت یا فروشگاه اینترنتی خود بگذارید. چت فوراً آنلاین می‌شود!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Integration for Frameworks -->
+          <div class="docs-section">
+            <h3>
+              <span>🧩</span>
+              <span>کدهای آماده اتصال به سیستم‌ها و فریم‌ورک‌های مختلف</span>
+            </h3>
+            <p>کد مناسب با فناوری سایت خود را انتخاب و مستقیماً کپی کنید:</p>
+
+            <div class="code-tabs">
+              <button class="code-tab-btn active" onclick="switchCodeTab('code-wp')">وردپرس (WordPress)</button>
+              <button class="code-tab-btn" onclick="switchCodeTab('code-react')">ری‌اکت / نکست‌جی‌اس (React/Next)</button>
+              <button class="code-tab-btn" onclick="switchCodeTab('code-html')">کد ساده HTML</button>
+              <button class="code-tab-btn" onclick="switchCodeTab('code-php')">PHP / لاراول</button>
+            </div>
+
+            <!-- WP Code -->
+            <div class="code-box code-content-pane" id="code-wp">
+              <button class="btn-copy-code" onclick="copySnippet('code-wp-pre')">کپی کد</button>
+              <pre id="code-wp-pre">// در فایل functions.php قالب فرزند یا با افزونه WPCode اضافه کنید:
+add_action('wp_footer', function() {
+    ?&gt;
+    &lt;script src="http://0.0.0.0:8000/static/widget.js" 
+            data-site-id="site_default" 
+            data-api-url="http://0.0.0.0:8000" 
+            async&gt;
+    &lt;/script&gt;
+    &lt;?php
+});</pre>
+            </div>
+
+            <!-- React Code -->
+            <div class="code-box code-content-pane" id="code-react" style="display: none;">
+              <button class="btn-copy-code" onclick="copySnippet('code-react-pre')">کپی کد</button>
+              <pre id="code-react-pre">// در کامپوننت Layout یا App.js
+import { useEffect } from 'react';
+
+export default function SupportWidget() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'http://0.0.0.0:8000/static/widget.js';
+    script.setAttribute('data-site-id', 'site_default');
+    script.setAttribute('data-api-url', 'http://0.0.0.0:8000');
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return null;
+}</pre>
+            </div>
+
+            <!-- HTML Code -->
+            <div class="code-box code-content-pane" id="code-html" style="display: none;">
+              <button class="btn-copy-code" onclick="copySnippet('code-html-pre')">کپی کد</button>
+              <pre id="code-html-pre">&lt;!-- قرار دادن قبل از تگ پایانی &lt;/body&gt; --&gt;
+&lt;script src="http://0.0.0.0:8000/static/widget.js" 
+        data-site-id="site_default" 
+        data-api-url="http://0.0.0.0:8000" 
+        async&gt;
+&lt;/script&gt;</pre>
+            </div>
+
+            <!-- PHP Code -->
+            <div class="code-box code-content-pane" id="code-php" style="display: none;">
+              <button class="btn-copy-code" onclick="copySnippet('code-php-pre')">کپی کد</button>
+              <pre id="code-php-pre">&lt;!-- در فوتر قالب Blade یا فایل footer.php --&gt;
+&lt;script src="http://0.0.0.0:8000/static/widget.js" 
+        data-site-id="{{ config('services.omni_support.site_id', 'site_default') }}" 
+        data-api-url="{{ config('services.omni_support.url', 'http://0.0.0.0:8000') }}" 
+        async&gt;
+&lt;/script&gt;</pre>
+            </div>
+          </div>
+
+          <!-- Section 3: REST API & Interactive Tester -->
+          <div class="docs-section">
+            <h3>
+              <span>⚡</span>
+              <span>مستندات REST API و تستر آنلاین تیکت</span>
+            </h3>
+            <p>اگر می‌خواهید از بک‌اند سایت خود یا سرویس‌های دیگر، مستقیماً تیکت بسازید و پیام بفرستید، می‌توانید از REST API استفاده کنید:</p>
+
+            <div class="code-tabs">
+              <button class="code-tab-btn active" onclick="switchApiTab('api-curl')">cURL</button>
+              <button class="code-tab-btn" onclick="switchApiTab('api-python')">پایتون (Python)</button>
+              <button class="code-tab-btn" onclick="switchApiTab('api-node')">جاوااسکریپت (Node.js)</button>
+            </div>
+
+            <div class="code-box api-content-pane" id="api-curl">
+              <button class="btn-copy-code" onclick="copySnippet('api-curl-pre')">کپی cURL</button>
+              <pre id="api-curl-pre">curl -X POST "http://0.0.0.0:8000/api/v1/external/tickets" \
+  -H "Content-Type: application/json" \
+  -H "X-Site-Key: omni_live_k8s92f8a129d38c71e041" \
+  -d '{
+    "site_id": "site_default",
+    "customer_id": "user_49182",
+    "customer_name": "سارا کریمی",
+    "customer_email": "sara@example.com",
+    "message": "سلام، فاکتور خرید دیروز من صادر نشده است."
+  }'</pre>
+            </div>
+
+            <div class="code-box api-content-pane" id="api-python" style="display: none;">
+              <button class="btn-copy-code" onclick="copySnippet('api-python-pre')">کپی پایتون</button>
+              <pre id="api-python-pre">import requests
+
+url = "http://0.0.0.0:8000/api/v1/external/tickets"
+headers = {
+    "Content-Type": "application/json",
+    "X-Site-Key": "omni_live_k8s92f8a129d38c71e041"
+}
+payload = {
+    "site_id": "site_default",
+    "customer_id": "user_49182",
+    "customer_name": "سارا کریمی",
+    "customer_email": "sara@example.com",
+    "message": "سلام، فاکتور خرید دیروز من صادر نشده است."
+}
+
+res = requests.post(url, json=payload, headers=headers)
+print("Response:", res.json())</pre>
+            </div>
+
+            <div class="code-box api-content-pane" id="api-node" style="display: none;">
+              <button class="btn-copy-code" onclick="copySnippet('api-node-pre')">کپی Node</button>
+              <pre id="api-node-pre">const response = await fetch("http://0.0.0.0:8000/api/v1/external/tickets", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Site-Key": "omni_live_k8s92f8a129d38c71e041"
+  },
+  body: JSON.stringify({
+    site_id: "site_default",
+    customer_id: "user_49182",
+    customer_name: "سارا کریمی",
+    customer_email: "sara@example.com",
+    message: "سلام، فاکتور خرید دیروز من صادر نشده است."
+  })
+});
+const data = await response.json();
+console.log(data);</pre>
+            </div>
+
+            <!-- Live API Send Tester -->
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; margin-top: 16px;">
+              <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">تستر تعاملی ثبت مستقیم تیکت با API</h4>
+              <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">همین حالا بدون نوشتن کد، یک تیکت آزمایشی ارسال کنید تا عملکرد هوش مصنوعی و ثبت در چت‌باکس را تماشا کنید:</p>
+
+              <div style="display: flex; gap: 10px;">
+                <input type="text" class="form-input rtl" id="api-test-name" value="علی محمدی" placeholder="نام کاربر" style="width: 140px;">
+                <input type="text" class="form-input rtl" id="api-test-msg" value="سلام، ساعات کاری پشتیبانی تا چه ساعتیه؟" placeholder="متن پیام تیکت" style="flex: 1;">
+                <button class="btn-primary" id="btn-run-api-ticket">ارسال مستقیم تیکت</button>
+              </div>
+              <div id="api-test-feedback" style="margin-top: 10px; font-size: 12.5px;"></div>
+            </div>
+          </div>
+
+          <!-- Section 4: How TypeSafe & Learning Works -->
+          <div class="docs-section">
+            <h3>
+              <span>🧠</span>
+              <span>راهنمای فنی: هوش مصنوعی TypeSafe و نحوه یادگیری از پشتیبان‌ها</span>
+            </h3>
+            <p>این سیستم با دو نوآوری کلیدی مجهز شده است:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="background: #ffffff; border: 1px solid var(--border); border-right: 4px solid var(--primary); border-radius: var(--radius-sm); padding: 14px;">
+                <h4 style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">۱. موتور ارزیابی گزینه‌ها (TypeSafe Multi-Option Evaluation)</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0; line-height: 1.6;">
+                  به جای ارسال مستقیم اولین پاسخ به کاربر، مدل در یک ساختار تایپ‌شده JSON، چهار گزینه ممکن را تحلیل می‌کند: پاسخ خودکار (AUTO_ANSWER)، آماده‌سازی پیش‌نویس برای پشتیبان (SUGGEST_TO_AGENT)، ارجاع کامل به انسان (TRANSFER_TO_HUMAN) و درخواست شفاف‌سازی (CLARIFY). هر گزینه امتیازدهی شده و در صورتی که اطمینان مدل بالاتر از آستانه تعیین‌شده شما باشد، پاسخ ارسال می‌گردد. در غیر این صورت، مکالمه امن نگه داشته شده و برای پشتیبان پرچم‌گذاری می‌شود.
+                </p>
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid var(--border); border-right: 4px solid #10b981; border-radius: var(--radius-sm); padding: 14px;">
+                <h4 style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">۲. یادگیری پویا از پاسخ‌های تاییدشده پشتیبان (Agent Learning Core)</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 0; line-height: 1.6;">
+                  وقتی پشتیبان انسانی یک پاسخ دقیق برای سوالی می‌نویسد، با کلیک روی گزینه «آموزش به هوش مصنوعی» یا به صورت خودکار، این پرسش و پاسخ وارد پایگاه حافظه سیستم می‌شود. در مراجعات بعدی مشتریان، سیستم این دانش را با موتور بازیابی تشابه (Similarity Retrieval) استخراج کرده و هوش مصنوعی با اطمینان ۱۰۰٪ پاسخ را تحویل می‌دهد!
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Add Knowledge Item Modal -->
+  <div class="modal-overlay" id="modal-add-kb">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>افزودن پرسش و پاسخ جدید به پایگاه دانش</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-kb')">×</button>
+      </div>
+
+      <form id="form-create-kb">
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">عنوان یا سوال کاربر</label>
+          <input type="text" class="form-input rtl" id="new-kb-title" required placeholder="مثال: نحوه پیگیری سفارش پستی">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">دسته‌بندی</label>
+          <select class="form-select rtl" id="new-kb-category">
+            <option value="faq">پرسش‌های متداول (FAQ)</option>
+            <option value="policy">قوانین و استرداد</option>
+            <option value="technical">فنی و راهنما</option>
+            <option value="agent_learned">آموزش پشتیبان</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">پاسخ کامل و راهنما</label>
+          <textarea class="form-textarea rtl" id="new-kb-content" rows="4" required placeholder="توضیح کامل و رسمی راهکار..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label">کلمات کلیدی و برچسب‌ها (با کاما جدا کنید)</label>
+          <input type="text" class="form-input rtl" id="new-kb-tags" placeholder="رهگیری, کد مرسوله, پست, ارسال">
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-add-kb')">انصراف</button>
+          <button type="submit" class="btn-primary">ذخیره در پایگاه دانش</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Learn from Agent Quick Modal -->
+  <div class="modal-overlay" id="modal-learn-agent">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🎓 آموزش این پاسخ به هوش مصنوعی</h3>
+        <button class="modal-close" onclick="closeModal('modal-learn-agent')">×</button>
+      </div>
+
+      <form id="form-learn-agent">
+        <input type="hidden" id="learn-conv-id">
+        
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">سوال کاربر</label>
+          <input type="text" class="form-input rtl" id="learn-question" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">پاسخ تاییدشده پشتیبان جهت ذخیره در حافظه AI</label>
+          <textarea class="form-textarea rtl" id="learn-answer" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label class="form-label">برچسب‌ها</label>
+          <input type="text" class="form-input rtl" id="learn-tags" value="agent_solution, verified">
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modal-learn-agent')">انصراف</button>
+          <button type="submit" class="btn-primary" style="background-color: #10b981;">تایید و ثبت در حافظه AI</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Frontend JS Scripts -->
+  <script src="/frontend/js/app.js"></script>
+  <script src="/frontend/js/chat.js"></script>
+  <script src="/frontend/js/ai-settings.js"></script>
+  <script src="/frontend/js/knowledge.js"></script>
+  <script src="/frontend/js/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  omni-support-app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: omni_support_platform
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DATABASE_URL=sqlite+aiosqlite:///./omni_support.db
+      - SECRET_KEY=omni-support-secret-super-key-change-in-production
+    volumes:
+      - omni_data:/app/backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  omni_data:
+    driver: local

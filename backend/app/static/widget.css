@@ -1,0 +1,367 @@
+/* OmniSupport Widget Styles - Standalone & Encapsulated */
+:root {
+  --omni-primary: #4f46e5;
+  --omni-primary-hover: #4338ca;
+  --omni-bg: #ffffff;
+  --omni-text: #1f2937;
+  --omni-muted: #6b7280;
+  --omni-bubble-agent: #f3f4f6;
+  --omni-bubble-agent-text: #111827;
+  --omni-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.omni-widget-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999999;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Vazirmatn", Tahoma, sans-serif;
+  direction: rtl;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.omni-widget-container.left-aligned {
+  right: auto;
+  left: 24px;
+}
+
+.omni-widget-container * {
+  box-sizing: border-box;
+}
+
+/* Floating Launcher Button */
+.omni-launcher {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: var(--omni-primary);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--omni-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+  outline: none;
+  position: relative;
+}
+
+.omni-launcher:hover {
+  transform: scale(1.08);
+  background: var(--omni-primary-hover);
+}
+
+.omni-launcher svg {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+  transition: transform 0.25s ease;
+}
+
+.omni-launcher.open .omni-icon-chat {
+  display: none;
+}
+.omni-launcher .omni-icon-close {
+  display: none;
+}
+.omni-launcher.open .omni-icon-close {
+  display: block;
+}
+
+.omni-badge {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+/* Chat Box Window */
+.omni-window {
+  position: absolute;
+  bottom: 78px;
+  right: 0;
+  width: 380px;
+  height: 560px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 110px);
+  background: var(--omni-bg);
+  border-radius: 20px;
+  box-shadow: var(--omni-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(0.96);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #e5e7eb;
+}
+
+.omni-widget-container.left-aligned .omni-window {
+  right: auto;
+  left: 0;
+}
+
+.omni-window.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* Chat Header */
+.omni-header {
+  background: linear-gradient(135deg, var(--omni-primary) 0%, var(--omni-primary-hover) 100%);
+  color: #ffffff;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.omni-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.omni-header-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.omni-header-text h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.omni-header-status {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.omni-status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #34d399;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.omni-close-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  opacity: 0.8;
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.omni-close-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Chat Messages Stream */
+.omni-messages {
+  flex: 1;
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f9fafb;
+}
+
+.omni-msg {
+  max-width: 82%;
+  display: flex;
+  flex-direction: column;
+  animation: omniFadeIn 0.25s ease-out;
+}
+
+@keyframes omniFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.omni-msg-customer {
+  align-self: flex-start;
+  text-align: right;
+}
+
+.omni-msg-agent, .omni-msg-ai, .omni-msg-system {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.omni-msg-bubble {
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.omni-msg-customer .omni-msg-bubble {
+  background: var(--omni-primary);
+  color: #ffffff;
+  border-bottom-left-radius: 4px;
+}
+
+.omni-msg-agent .omni-msg-bubble, .omni-msg-ai .omni-msg-bubble {
+  background: #ffffff;
+  color: var(--omni-text);
+  border: 1px solid #e5e7eb;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.omni-msg-system .omni-msg-bubble {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px dashed #f59e0b;
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.omni-msg-meta {
+  font-size: 11px;
+  color: var(--omni-muted);
+  margin-top: 4px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.omni-sender-badge {
+  background: #e0e7ff;
+  color: #4338ca;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.omni-sender-badge.ai-badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Typing Indicator */
+.omni-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  width: fit-content;
+  align-self: flex-end;
+}
+
+.omni-dot {
+  width: 6px;
+  height: 6px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: omniBounce 1.4s infinite ease-in-out both;
+}
+.omni-dot:nth-child(1) { animation-delay: -0.32s; }
+.omni-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes omniBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* Input Area */
+.omni-input-area {
+  padding: 12px 14px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.omni-input-field {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  resize: none;
+  max-height: 100px;
+  outline: none;
+  direction: rtl;
+  transition: border-color 0.2s;
+}
+
+.omni-input-field:focus {
+  border-color: var(--omni-primary);
+}
+
+.omni-send-btn {
+  background: var(--omni-primary);
+  color: #ffffff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.omni-send-btn:hover {
+  background: var(--omni-primary-hover);
+}
+
+.omni-send-btn:active {
+  transform: scale(0.95);
+}
+
+.omni-send-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transform: rotate(180deg);
+}
+
+/* Footer / Watermark */
+.omni-footer-note {
+  font-size: 10.5px;
+  color: #9ca3af;
+  text-align: center;
+  padding: 4px;
+  background: #ffffff;
+  border-top: 1px solid #f3f4f6;
+}
