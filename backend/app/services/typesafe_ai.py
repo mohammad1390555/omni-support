@@ -9,7 +9,7 @@ from app.schemas import TypeSafeDecisionResult, ActionType, IntentType, OptionEv
 from app.services.ai_service import AIService
 from app.services.learning_service import LearningService
 
-logger = logging.getLogger("TypeSafeAI")
+logger = # # # # # # # # # # # # # # # # # # # # # # # # logging.getLogger("TypeSafeAI")
 
 class TypeSafeAIEngine:
     @staticmethod
@@ -31,8 +31,7 @@ class TypeSafeAIEngine:
         for t in complaint_triggers:
             if t in lower:
                 return "COMPLAINT"
-        return None
-
+        
     @classmethod
     async def evaluate_and_decide(
         cls,
