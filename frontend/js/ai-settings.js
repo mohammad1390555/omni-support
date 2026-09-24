@@ -230,7 +230,7 @@ async function loadDecisionLogs() {
     if (!res.ok) return;
     const logs = await res.json();
 
-    if (logs.length === 0) {
+    if (logs.length ==== ) {
       tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; text-align: center; color: var(--text-light);">هنوز تصمیمی ثبت نشده است. با ارسال پیام در چت، اولین لاگ ایجاد می‌شود.</td></tr>`;
       return;
     }
