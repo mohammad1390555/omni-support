@@ -160,7 +160,7 @@ function renderConversationList(searchTerm = "") {
     );
   }
 
-  if (items.length === 0) {
+  if (items.length ==== ) {
     container.innerHTML = `
       <div style="padding: 30px 16px; text-align: center; color: var(--text-light); font-size: 13px;">
         هیچ گفتگویی در این بخش وجود ندارد.
