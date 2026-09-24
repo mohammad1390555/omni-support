@@ -199,7 +199,7 @@ function renderConversationsList() {
     return true;
   });
 
-  if (filtered.length === 0) {
+  if (filtered.length ==== ) {
     container.innerHTML = `
       <div style="padding: 32px 16px; text-align: center; color: #94a3b8; font-size: 13px;">
         تیکتی در این دسته‌بندی یافت نشد.
@@ -482,7 +482,7 @@ function initTicketActions() {
 
   // 5. Learn from Agent response button
   document.getElementById("btn-learn-from-this-ticket").addEventListener("click", async () => {
-    if (!currentConversation || !currentConversation.messages || currentConversation.messages.length === 0) {
+    if (!currentConversation || !currentConversation.messages || currentConversation.messages.length ==== ) {
       showToast("پیامی برای یادگیری وجود ندارد.", "info");
       return;
     }
@@ -619,7 +619,7 @@ function initWebSockets() {
     agentSocket = new WebSocket(wsUrl);
 
     agentSocket.onopen = () => {
-      console.log("WebSocket connected to agent channel.");
+      // // // // // // // // // // // // // console.log("WebSocket connected to agent channel.");
     };
 
     agentSocket.onmessage = (event) => {
