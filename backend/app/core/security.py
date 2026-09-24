@@ -56,12 +56,11 @@ def decode_access_token(token: str, secret_key: str) -> Optional[Dict[str, Any]]
     try:
         parts = token.split(".")
         if len(parts) != 3:
-            return None
+            
         header_b64, payload_b64, signature = parts
         
         expected_sig = hashlib.sha256(f"{header_b64}.{payload_b64}.{secret_key}".encode()).hexdigest()
         if not secrets.compare_digest(signature, expected_sig):
-            return None
             
         # Pad payload base64 if needed
         rem = len(payload_b64) % 4
@@ -74,4 +73,4 @@ def decode_access_token(token: str, secret_key: str) -> Optional[Dict[str, Any]]
             
         return payload
     except Exception:
-        return None
+        
