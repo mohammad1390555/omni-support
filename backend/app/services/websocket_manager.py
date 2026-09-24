@@ -6,7 +6,7 @@ from fastapi import WebSocket
 logger = logging.getLogger("WebSocketManager")
 
 class WebSocketManager:
-    def __init__(self):
+    
         # All connected agents/admins
         self.agent_connections: Set[WebSocket] = set()
         # Customer connections grouped by conversation_id

@@ -31,8 +31,7 @@ class TypeSafeAIEngine:
         for t in complaint_triggers:
             if t in lower:
                 return "COMPLAINT"
-        return None
-
+        
     @classmethod
     async def evaluate_and_decide(
         cls,
