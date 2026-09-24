@@ -32,11 +32,10 @@ async def get_analytics_overview(db: AsyncSession = Depends(get_db)):
         if act in breakdown:
             breakdown[act] += 1
 
-    # Provide realistic baseline if empty or low
-    auto_count = breakdown["AUTO_ANSWER"] or 18
-    suggest_count = breakdown["SUGGEST_TO_AGENT"] or 6
-    transfer_count = breakdown["TRANSFER_TO_HUMAN"] or 2
-    clarify_count = breakdown["CLARIFY"] or 3
+    auto_count = breakdown["AUTO_ANSWER"]
+    suggest_count = breakdown["SUGGEST_TO_AGENT"]
+    transfer_count = breakdown["TRANSFER_TO_HUMAN"]
+    clarify_count = breakdown["CLARIFY"]
 
     display_breakdown = {
         "AUTO_ANSWER": auto_count,
@@ -45,22 +44,22 @@ async def get_analytics_overview(db: AsyncSession = Depends(get_db)):
         "CLARIFY": clarify_count
     }
 
-    avg_latency = (await db.execute(select(func.avg(TypeSafeDecisionLog.latency_ms)))).scalar() or 185
+    avg_latency = (await db.execute(select(func.avg(TypeSafeDecisionLog.latency_ms)))).scalar() or 0
     total_d = sum(display_breakdown.values())
-    ai_resolved_pct = round((auto_count / total_d) * 100, 1)
+    ai_resolved_pct = round((auto_count / total_d) * 100, 1) if total_d else 0.0
 
     return AnalyticsOverviewResponse(
-        total_conversations=total_convs or 12,
+        total_conversations=total_convs,
         open_tickets=open_tickets,
-        in_progress_tickets=in_progress or 1,
+        in_progress_tickets=in_progress,
         pending_customer_tickets=pending_cust,
-        resolved_tickets=resolved_tickets or 1,
-        urgent_tickets=urgent_tickets or 1,
-        total_messages=total_msgs or 24,
+        resolved_tickets=resolved_tickets,
+        urgent_tickets=urgent_tickets,
+        total_messages=total_msgs,
         ai_resolved_percent=ai_resolved_pct,
         avg_latency_ms=int(avg_latency),
-        total_agents=total_agents or 2,
-        total_knowledge_items=total_kb or 4,
-        sla_compliance_percent=97.2,
+        total_agents=total_agents,
+        total_knowledge_items=total_kb,
+        sla_compliance_percent=0.0,
         recent_decisions_breakdown=display_breakdown
     )

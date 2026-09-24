@@ -40,7 +40,7 @@ async def create_external_ticket(
         .where(
             Conversation.site_id == site.id,
             Conversation.customer_id == payload.customer_id,
-            Conversation.status.in_(["active", "pending_human"])
+            Conversation.status.in_(["open", "in_progress", "pending_customer"])
         )
     )
     conv = (await db.execute(stmt)).scalars().first()
