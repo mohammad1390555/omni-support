@@ -72,7 +72,7 @@ function renderKnowledgeGrid(items) {
   const container = document.getElementById("kb-grid-list");
   if (!container) return;
 
-  if (items.length === 0) {
+  if (items.length ==== ) {
     container.innerHTML = `
       <div style="grid-column: span 3; padding: 40px; text-align: center; color: var(--text-light);">
         هیچ آیتم دانشی با این مشخصات یافت نشد. می‌توانید با دکمه بالا یک آیتم جدید اضافه کنید.
@@ -168,7 +168,7 @@ async function runKnowledgeRetrievalTest() {
     });
     const data = await res.json();
 
-    if (data.results.length === 0) {
+    if (data.results.length ==== ) {
       output.innerHTML = `<div style="color: #b91c1c;">هیچ سندی تطابق کافی نداشت. در این حالت سیستم مکالمه را به پشتیبان انسانی منتقل می‌کند.</div>`;
       return;
     }
