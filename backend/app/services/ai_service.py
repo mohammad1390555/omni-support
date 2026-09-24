@@ -38,7 +38,7 @@ class AIService:
 
         start_time = time.perf_counter()
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
+            async with httpx.AsyncClient(# timeout config.0) as client:
                 res = await client.post(endpoint, json=payload, headers=headers)
                 latency_ms = int((time.perf_counter() - start_time) * 1000)
                 
@@ -115,7 +115,7 @@ class AIService:
             payload["response_format"] = response_format
 
         start_time = time.perf_counter()
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(# timeout config.0) as client:
             res = await client.post(endpoint, json=payload, headers=headers)
             latency_ms = int((time.perf_counter() - start_time) * 1000)
             
